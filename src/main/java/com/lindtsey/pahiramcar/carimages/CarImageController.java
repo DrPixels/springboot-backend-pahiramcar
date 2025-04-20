@@ -1,13 +1,12 @@
 package com.lindtsey.pahiramcar.carimages;
 
-import com.lindtsey.pahiramcar.car.Car;
-import com.lindtsey.pahiramcar.cloudinary.CloudinaryService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 public class CarImageController {
@@ -18,11 +17,18 @@ public class CarImageController {
         this.carImageService = carImageService;
     }
 
-//    @PostMapping("/car/{car-id}/images")
-//    public CarImage saveCarImage(@PathVariable("car-id") Integer carId, @RequestBody CarImageDTO carImageDTO) throws IOException {
-//        CarImage savedCarImage = this.carImageService.toCarImage(carImageDTO);
-//
-//        return carImageService.save(savedCarImage);
-//    }
+    @PostMapping("/api/car/images")
+    public ResponseEntity<?> saveCarImages(Integer carId, @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {
+
+        List<CarImage> carImages = carImageService.saveCarImages(carId, multipartFiles);
+        return new ResponseEntity<>(carImages, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/api/car/images/{image-id}")
+    public ResponseEntity<?> deleteCarImage(@PathVariable("image-id") Integer imageId) {
+        carImageService.deleteCarImageById(imageId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

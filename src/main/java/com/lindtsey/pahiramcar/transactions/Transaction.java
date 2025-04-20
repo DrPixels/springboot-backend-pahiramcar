@@ -7,7 +7,11 @@ import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.employee.Employee;
 import com.lindtsey.pahiramcar.enums.PaymentMode;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "Transactions")
 public class Transaction {
@@ -44,69 +48,4 @@ public class Transaction {
     private Float amountPaid;
     private PaymentMode paymentMode;
 
-    public Transaction() {}
-
-    public Integer getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(Integer transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public Booking getBooking() {
-        return booking;
-    }
-
-    public void setBooking(Booking booking) {
-        this.booking = booking;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public Car getCar() {
-        return car;
-    }
-
-    public void setCar(Car car) {
-        this.car = car;
-    }
-
-    public Float getAmountDue() {
-        return amountDue;
-    }
-
-    public void setAmountDue(Float amountDue) {
-        this.amountDue = amountDue;
-    }
-
-    public Float getAmountPaid() {
-        return amountPaid;
-    }
-
-    public void setAmountPaid(Float amountPaid) {
-        this.amountPaid = amountPaid;
-    }
-
-    public PaymentMode getPaymentMode() {
-        return paymentMode;
-    }
-
-    public void setPaymentMode(PaymentMode paymentMode) {
-        this.paymentMode = paymentMode;
-    }
 }

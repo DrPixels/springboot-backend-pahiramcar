@@ -13,7 +13,9 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public Customer saveCustomer(Customer customer) {
+    public Customer saveCustomer(CustomerDTO dto) {
+        Customer customer = toCustomer(dto);
+
         return customerRepository.save(customer);
     }
 
@@ -27,6 +29,20 @@ public class CustomerService {
 
     public void deleteCustomerById(Integer customerId) {
         customerRepository.deleteById(customerId);
+    }
+
+    public Customer toCustomer(CustomerDTO dto) {
+        Customer customer = new Customer();
+        customer.setUsername(dto.username());
+        customer.setPassword(dto.password());
+        customer.setFirstName(dto.firstName());
+        customer.setLastName(dto.lastName());
+        customer.setMiddleName(dto.middleName());
+        customer.setEmail(dto.email());
+        customer.setMobilePhone(dto.mobilePhone());
+        customer.setBirthDate(dto.birthDate());
+
+        return customer;
     }
 
 }

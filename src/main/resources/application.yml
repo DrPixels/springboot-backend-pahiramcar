@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/pahiramcar
+    url: jdbc:mysql://localhost:3306/pahiramcar?createDatabaseIfNotExist=true
     username: root
     password: homecredit123
     driver-class-name: com.mysql.cj.jdbc.Driver

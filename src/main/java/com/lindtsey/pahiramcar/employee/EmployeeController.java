@@ -2,7 +2,6 @@ package com.lindtsey.pahiramcar.employee;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.List;
 @RestController
 public class EmployeeController {
 
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
@@ -31,8 +30,8 @@ public class EmployeeController {
     }
 
     @PostMapping("/api/employees")
-    public ResponseEntity<?> saveEmployee(@RequestBody Employee employee) {
-        Employee savedEmployee = this.employeeService.save(employee);
+    public ResponseEntity<?> saveEmployee(@RequestBody EmployeeDTO dto) {
+        Employee savedEmployee = this.employeeService.save(dto);
 
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }

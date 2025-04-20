@@ -18,9 +18,9 @@ public class CustomerController {
 
     // Adding new entity
     @PostMapping("/api/customers")
-    public ResponseEntity<?> saveCustomer(@Valid @RequestBody Customer customer) {
+    public ResponseEntity<?> saveCustomer(@Valid @RequestBody CustomerDTO dto) {
 
-        Customer savedCustomer = this.customerService.saveCustomer(customer);
+        Customer savedCustomer = this.customerService.saveCustomer(dto);
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
 

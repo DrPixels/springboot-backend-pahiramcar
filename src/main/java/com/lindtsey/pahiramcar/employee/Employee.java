@@ -6,10 +6,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "Employees")
 public class Employee {
@@ -26,6 +31,9 @@ public class Employee {
 
     @Column(nullable = false)
     private String password;
+
+    @Column
+    private String employeeImageURL;
 
     @NotBlank(message = "First name is required.")
     @Column(nullable = false)
@@ -50,98 +58,12 @@ public class Employee {
     @Column(unique = true)
     private String email;
 
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
     @OneToMany(
             mappedBy = "employee"
     )
     private List<Transaction> transactions;
 
-    public Employee() {};
-
-    public Integer getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(Integer employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public AdminRoles getRole() {
-        return role;
-    }
-
-    public void setRole(AdminRoles role) {
-        this.role = role;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public String getMobilePhone() {
-        return mobilePhone;
-    }
-
-    public void setMobilePhone(String mobilePhone) {
-        this.mobilePhone = mobilePhone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
 }

@@ -1,25 +1,30 @@
 package com.lindtsey.pahiramcar.carimages;
 
 import com.lindtsey.pahiramcar.car.Car;
-import com.lindtsey.pahiramcar.car.CarService;
+import com.lindtsey.pahiramcar.car.CarRepository;
 import com.lindtsey.pahiramcar.cloudinary.CloudinaryService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class CarImageService {
 
     private final CarImageRepository carImageRepository;
+    private final CarRepository carRepository;
+    private final CloudinaryService cloudinaryService;
 
-    public CarImageService(CarImageRepository carImageRepository) {
+    public CarImageService(CarImageRepository carImageRepository, CarRepository carRepository, CloudinaryService cloudinaryService) {
         this.carImageRepository = carImageRepository;
+        this.carRepository = carRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public List<CarImage> findAllCarImageByCarId(Integer carId) {
@@ -30,9 +35,30 @@ public class CarImageService {
         return carImageRepository.findById(carId);
     }
 
-    public CarImage save(CarImage carImage) throws IOException {
+    public List<CarImage> saveCarImages(Integer carId, MultipartFile[] multipartFiles) throws IOException {
 
-        return carImageRepository.save(carImage);
+        List<CarImage> carImages = new ArrayList<>();
+        for (MultipartFile file: multipartFiles) {
+            //Uploading the image in the Cloudinary
+            BufferedImage bufferedImage = ImageIO.read(file.getInputStream());
+            if( bufferedImage == null ) {
+                throw new IOException("Failed to read the image.");
+            }
+
+            Map result = cloudinaryService.upload(file);
+            String carImageName = (String) result.get("original_filename");
+            String carImageUrl = (String) result.get("url");
+            String carImageCloudinaryId = (String) result.get("public_id");
+
+            CarImage carImage = new CarImage(carImageName, carImageUrl, carImageCloudinaryId);
+            Car car = carRepository.findById(carId).orElseThrow(() -> new RuntimeException("Car not found"));
+            carImage.setCar(car);
+
+            carImageRepository.save(carImage);
+            carImages.add(carImage);
+
+        }
+        return carImages;
     }
 
     public void deleteCarImageById(Integer carImageId) {

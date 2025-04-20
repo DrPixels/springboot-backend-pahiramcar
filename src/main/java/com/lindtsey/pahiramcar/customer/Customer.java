@@ -6,10 +6,16 @@ import com.lindtsey.pahiramcar.reservations.Reservation;
 import com.lindtsey.pahiramcar.transactions.Transaction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "Customers")
 public class Customer {
@@ -50,127 +56,25 @@ public class Customer {
     @Column(unique = true)
     private String email;
 
-    @OneToMany(
-            mappedBy = "customer"
-    )
-    @JsonManagedReference
-    private List<Reservation> reservations;
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
     @OneToMany(
             mappedBy = "customer"
     )
     @JsonManagedReference
-    private List<Booking> bookings;
+    private List<Reservation> reservations = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "customer"
     )
     @JsonManagedReference
-    private List<Transaction> transactions;
+    private List<Booking> bookings = new ArrayList<>();
 
-    public Customer() {}
+    @OneToMany(
+            mappedBy = "customer"
+    )
+    @JsonManagedReference
+    private List<Transaction> transactions = new ArrayList<>();
 
-    public Integer getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
-    }
-
-    public String getCustomerImageURL() {
-        return customerImageURL;
-    }
-
-    public void setCustomerImageURL(String customerImageURL) {
-        this.customerImageURL = customerImageURL;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public String getMobilePhone() {
-        return mobilePhone;
-    }
-
-    public void setMobilePhone(String mobilePhone) {
-        this.mobilePhone = mobilePhone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<Reservation> getReservations() {
-        return reservations;
-    }
-
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
-    }
-
-    public List<Booking> getBookings() {
-        return bookings;
-    }
-
-    public void setBookings(List<Booking> bookings) {
-        this.bookings = bookings;
-    }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
 }

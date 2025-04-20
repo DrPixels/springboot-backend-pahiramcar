@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BookingProofImageController {
 
-    private BookingProofImageService bookingProofImageService;
+    private final BookingProofImageService bookingProofImageService;
 
     public BookingProofImageController(BookingProofImageService bookingProofImageService) {
         this.bookingProofImageService = bookingProofImageService;
@@ -21,4 +21,5 @@ public class BookingProofImageController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }
