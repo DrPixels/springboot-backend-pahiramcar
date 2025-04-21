@@ -1,12 +1,11 @@
 package com.lindtsey.pahiramcar.car;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.lindtsey.pahiramcar.carimages.CarImage;
 import com.lindtsey.pahiramcar.enums.CarStatus;
 import com.lindtsey.pahiramcar.enums.CarType;
 import com.lindtsey.pahiramcar.enums.FuelType;
 import com.lindtsey.pahiramcar.enums.TransmissionType;
-import com.lindtsey.pahiramcar.reservations.Reservation;
+import com.lindtsey.pahiramcar.images.Image;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,18 +34,11 @@ public class Car {
     private CarStatus status;
     private String description;
 
-    @OneToOne(
-            mappedBy = "car"
-    )
-    @JsonManagedReference
-    private Reservation reservation;
-
     @OneToMany(
             mappedBy = "car",
             cascade = CascadeType.ALL
     )
     @JsonManagedReference
-    private List<CarImage> carImages = new ArrayList<>();
-
+    private List<Image> carImages = new ArrayList<>();
 
 }

@@ -1,16 +1,24 @@
 package com.lindtsey.pahiramcar.customer;
 
+import com.lindtsey.pahiramcar.enums.ImageOwnerType;
+import com.lindtsey.pahiramcar.images.Image;
+import com.lindtsey.pahiramcar.images.ImageService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final ImageService imageService;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, ImageService imageService) {
         this.customerRepository = customerRepository;
+        this.imageService = imageService;
     }
 
     public Customer saveCustomer(CustomerDTO dto) {
@@ -18,6 +26,24 @@ public class CustomerService {
 
         return customerRepository.save(customer);
     }
+
+    @Transactional
+    public Customer saveCustomerImage(Integer customerId, MultipartFile[] multipartFiles) throws IOException {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        if(customer.getCustomerImage() != null) {
+            Image currentCustomerImage = customer.getCustomerImage();
+
+            imageService.deleteImage(currentCustomerImage.getImageId());
+        }
+
+        List<Image> savedImages = imageService.saveImages(multipartFiles, ImageOwnerType.CUSTOMER, customerId);
+
+        customer.setCustomerImage(savedImages.getFirst());
+
+        return customer;
+    }
+
 
     public List<Customer> findAll() {
         return customerRepository.findAll();

@@ -1,13 +1,14 @@
 package com.lindtsey.pahiramcar.bookings;
 
-import com.lindtsey.pahiramcar.bookingproofimages.BookingProofImage;
-import com.lindtsey.pahiramcar.bookingproofimages.BookingProofImageService;
 import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.car.CarRepository;
 import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.customer.CustomerRepository;
+import com.lindtsey.pahiramcar.enums.ImageOwnerType;
 import com.lindtsey.pahiramcar.reservations.Reservation;
 import com.lindtsey.pahiramcar.reservations.ReservationRepository;
+import com.lindtsey.pahiramcar.images.Image;
+import com.lindtsey.pahiramcar.images.ImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,18 +20,18 @@ import java.util.List;
 public class BookingService {
 
     private final BookingRepository bookingRepository;
-    private final BookingProofImageService bookingProofImageService;
+    private final ImageService imageService;
     private final CustomerRepository customerRepository;
     private final CarRepository carRepository;
     private final ReservationRepository reservationRepository;
 
     public BookingService(BookingRepository bookingRepository,
-                          BookingProofImageService bookingProofImageService,
+                          ImageService imageService,
                           CustomerRepository customerRepository,
                           CarRepository carRepository,
                           ReservationRepository reservationRepository) {
         this.bookingRepository = bookingRepository;
-        this.bookingProofImageService = bookingProofImageService;
+        this.imageService = imageService;
         this.customerRepository = customerRepository;
         this.carRepository = carRepository;
         this.reservationRepository = reservationRepository;
@@ -43,11 +44,21 @@ public class BookingService {
 
         Integer bookingId = savedBooking.getBookingId();
 
-        List<BookingProofImage> bookingProofImages = bookingProofImageService.save(bookingId, multipartFiles);
+        List<Image> bookingProofImages = imageService.saveImages(multipartFiles, ImageOwnerType.BOOKING, bookingId);
 
         booking.setBookingProofImages(bookingProofImages);
 
         return savedBooking;
+    }
+
+    public Booking saveBookingImages(Integer bookingId, MultipartFile[] multipartFiles) throws IOException {
+       Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
+
+       List<Image> savedImages = imageService.saveImages(multipartFiles, ImageOwnerType.BOOKING, bookingId);
+
+       booking.getBookingProofImages().addAll(savedImages);
+
+       return booking;
     }
 
     public List<Booking> findBookingByCustomerId(Integer customerId) {
@@ -60,6 +71,10 @@ public class BookingService {
 
     public List<Booking> findAllBooking() {
         return bookingRepository.findAll();
+    }
+
+    public void deleteImage(Integer imageId) throws IOException {
+        imageService.deleteImage(imageId);
     }
 
     public void deleteBookingById(Integer bookingId) {

@@ -12,9 +12,17 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService bookingService;
+    private final BookingRepository bookingRepository;
 
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingService bookingService, BookingRepository bookingRepository) {
         this.bookingService = bookingService;
+        this.bookingRepository = bookingRepository;
+    }
+
+    @GetMapping("/api/bookings")
+    public ResponseEntity<List<Booking>> findAllBookings() {
+        List<Booking> bookings = bookingService.findAllBooking();
+        return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
     @GetMapping("/api/bookings/{customer-id}")
@@ -40,9 +48,23 @@ public class BookingController {
         return new ResponseEntity<>(booking, HttpStatus.CREATED);
     }
 
+    @PostMapping("/api/bookings/{booking-id}/images")
+    public ResponseEntity<?> saveBookingImage(@PathVariable("booking-id") Integer bookingId, @RequestPart("images")MultipartFile[] multipartFiles) throws IOException {
+        Booking booking = bookingService.saveBookingImages(bookingId, multipartFiles);
+
+        return new ResponseEntity<>(booking, HttpStatus.CREATED);
+    }
+
     @DeleteMapping("/api/bookings/{booking-id}")
     public ResponseEntity<?> deleteBooking(@PathVariable("booking-id") Integer bookingId) {
         bookingService.deleteBookingById(bookingId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/api/bookings/{image-id}")
+    public ResponseEntity<?> deleteCarImageById(@PathVariable("image-id") Integer imageId) throws IOException {
+        bookingService.deleteImage(imageId);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -1,11 +1,11 @@
 package com.lindtsey.pahiramcar.bookings;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.lindtsey.pahiramcar.bookingproofimages.BookingProofImage;
 import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.enums.BookingStatus;
 import com.lindtsey.pahiramcar.reservations.Reservation;
+import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.transactions.Transaction;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -52,7 +52,7 @@ public class Booking {
     @OneToMany(
             mappedBy = "booking"
     )
-    private List<BookingProofImage> bookingProofImages;
+    private List<Image> bookingProofImages;
 
     private String driverLicenseNumber;
     private LocalDate startDate;

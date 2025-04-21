@@ -1,6 +1,7 @@
 package com.lindtsey.pahiramcar.employee;
 
 import com.lindtsey.pahiramcar.enums.AdminRoles;
+import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.transactions.Transaction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -32,9 +33,6 @@ public class Employee {
     @Column(nullable = false)
     private String password;
 
-    @Column
-    private String employeeImageURL;
-
     @NotBlank(message = "First name is required.")
     @Column(nullable = false)
     private String firstName;
@@ -60,6 +58,12 @@ public class Employee {
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToOne(
+            mappedBy = "employee",
+            cascade = CascadeType.ALL
+    )
+    private Image employeeImage;
 
     @OneToMany(
             mappedBy = "employee"

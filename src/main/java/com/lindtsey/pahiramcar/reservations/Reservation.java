@@ -30,7 +30,6 @@ public class Reservation {
     @JoinColumn(
             name = "car_id"
     )
-    @JsonBackReference
     private Car car;
 
     private LocalDate reservationStartDate;

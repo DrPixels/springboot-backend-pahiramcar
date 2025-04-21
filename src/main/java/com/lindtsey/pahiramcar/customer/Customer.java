@@ -3,9 +3,12 @@ package com.lindtsey.pahiramcar.customer;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lindtsey.pahiramcar.bookings.Booking;
 import com.lindtsey.pahiramcar.reservations.Reservation;
+import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.transactions.Transaction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +20,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity
+@Builder
+@AllArgsConstructor
 @Table(name = "Customers")
 public class Customer {
 
@@ -29,9 +34,6 @@ public class Customer {
 
     @Column(nullable = false)
     private String password;
-
-    @Column
-    private String customerImageURL;
 
     @NotBlank(message = "First name is required.")
     @Column(nullable = false)
@@ -58,6 +60,12 @@ public class Customer {
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToOne(
+            mappedBy = "customer",
+            cascade = CascadeType.ALL
+    )
+    private Image customerImage;
 
     @OneToMany(
             mappedBy = "customer"

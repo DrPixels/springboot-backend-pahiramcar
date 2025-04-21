@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,6 +26,13 @@ public class CustomerController {
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
 
+    @PostMapping("/api/customer/{customer-id}/image")
+    public ResponseEntity<?> saveCustomerImage(@Valid @PathVariable("customer-id") Integer customerId, @RequestPart("image") MultipartFile[] multipartFiles) throws IOException {
+        Customer customer = this.customerService.saveCustomerImage(customerId, multipartFiles);
+
+        return new ResponseEntity<>(customer, HttpStatus.CREATED);
+    }
+
     // Getting all of the customers
     @GetMapping("/api/customers")
     public ResponseEntity<?> findAllCustomers() {
@@ -32,7 +41,6 @@ public class CustomerController {
 
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
-
 
     //Return a customer based on its id
     @GetMapping("/api/customers/{customer-id}")

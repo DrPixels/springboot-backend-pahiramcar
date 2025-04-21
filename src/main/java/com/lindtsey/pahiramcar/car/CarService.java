@@ -1,7 +1,8 @@
 package com.lindtsey.pahiramcar.car;
 
-import com.lindtsey.pahiramcar.carimages.CarImage;
-import com.lindtsey.pahiramcar.carimages.CarImageService;
+import com.lindtsey.pahiramcar.enums.ImageOwnerType;
+import com.lindtsey.pahiramcar.images.Image;
+import com.lindtsey.pahiramcar.images.ImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,11 +13,11 @@ import java.util.List;
 public class CarService {
 
     private final CarRepository carRepository;
-    private final CarImageService carImageService;
+    private final ImageService imageService;
 
-    public CarService(CarRepository carRepository, CarImageService carImageService) {
+    public CarService(CarRepository carRepository, ImageService imageService) {
         this.carRepository = carRepository;
-        this.carImageService = carImageService;
+        this.imageService = imageService;
     }
 
     public List<Car> findAllCars() {
@@ -24,15 +25,30 @@ public class CarService {
     }
 
     @Transactional
-    public Car saveCarWithImages(Car car, MultipartFile[] multipartFiles) throws IOException {
+    public Car saveCarWithImages(CarDTO dto, MultipartFile[] multipartFiles) throws IOException {
+        Car car = toCar(dto);
         Car savedCar = carRepository.save(car);
         Integer carId = savedCar.getCarId();
 
-        List<CarImage> carImages = carImageService.saveCarImages(carId, multipartFiles);
+        List<Image> carImages = imageService.saveImages(multipartFiles, ImageOwnerType.CAR, carId);
 
         savedCar.setCarImages(carImages);
 
         return savedCar;
+    }
+
+    public Car saveImages(Integer carId, MultipartFile[] multipartFiles) throws IOException {
+        Car car = carRepository.findById(carId).orElseThrow(() -> new RuntimeException("Car not found"));
+
+        List<Image> savedCarImages = imageService.saveImages(multipartFiles, ImageOwnerType.CAR, carId);
+
+        car.getCarImages().addAll(savedCarImages);
+
+        return car;
+    }
+
+    public void deleteImage(Integer imageId) throws IOException {
+        imageService.deleteImage(imageId);
     }
 
     public Car findCarById(int id) {
@@ -41,5 +57,21 @@ public class CarService {
 
     public void deleteCarById(int id) {
         carRepository.deleteById(id);
+    }
+
+    public Car toCar(CarDTO dto) {
+        Car car = new Car();
+        car.setName(dto.name());
+        car.setYear(dto.year());
+        car.setPlateNumber(dto.plateNumber());
+        car.setCarType(dto.carType());
+        car.setTransmissionType(dto.transmissionType());
+        car.setFuelType(dto.fuelType());
+        car.setSeats(dto.seats());
+        car.setPricePerDay(dto.pricePerDay());
+        car.setStatus(dto.status());
+        car.setDescription(dto.description());
+
+        return car;
     }
 }

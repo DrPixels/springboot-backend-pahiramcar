@@ -6,10 +6,13 @@ import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.employee.Employee;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class TransactionService {
 
-    private TransactionRepository transactionRepository;
+    private final TransactionRepository transactionRepository;
 
     public TransactionService(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
@@ -18,6 +21,14 @@ public class TransactionService {
     public Transaction save(TransactionDTO dto) {
         Transaction transaction = toTransaction(dto);
         return transactionRepository.save(transaction);
+    }
+
+    public List<Transaction> findAllTransactions() {
+        return transactionRepository.findAll();
+    }
+
+    public Optional<Transaction> findTransactionById (Integer id) {
+        return transactionRepository.findById(id);
     }
 
     public void delete(Integer transactionId) {

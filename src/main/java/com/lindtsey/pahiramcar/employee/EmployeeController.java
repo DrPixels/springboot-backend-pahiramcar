@@ -1,9 +1,12 @@
 package com.lindtsey.pahiramcar.employee;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -34,6 +37,13 @@ public class EmployeeController {
         Employee savedEmployee = this.employeeService.save(dto);
 
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/api/employee/{employee-id}/image")
+    public ResponseEntity<?> saveCustomerImage(@Valid @PathVariable("employee-id") Integer employeeId, @RequestPart("image") MultipartFile[] multipartFiles) throws IOException {
+        Employee employee = this.employeeService.saveEmployeeImage(employeeId, multipartFiles);
+
+        return new ResponseEntity<>(employee, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/api/employees/{employee-id}")

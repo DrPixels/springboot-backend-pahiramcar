@@ -31,17 +31,30 @@ public class CarController {
         return new ResponseEntity<>(car, HttpStatus.OK);
     }
 
-
     @PostMapping("/api/cars")
-    public ResponseEntity<?> addCarWithImages(@RequestPart("car") Car car, @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {
-        Car savedCar = carService.saveCarWithImages(car, multipartFiles);
+    public ResponseEntity<?> addCarWithImages(@RequestPart("car") CarDTO dto, @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {
+        Car savedCar = carService.saveCarWithImages(dto, multipartFiles);
 
         return new ResponseEntity<>(savedCar, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/api/cars/{car-id}/images")
+    public ResponseEntity<?> uploadImage(@PathVariable("car-id") Integer carId, @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {
+
+        Car car = carService.saveImages(carId, multipartFiles);
+        return new ResponseEntity<>(car, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/api/cars/{car-id}")
     public ResponseEntity<?> deleteCarById(@PathVariable("car-id") Integer carId) {
         carService.deleteCarById(carId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/api/cars/{image-id}")
+    public ResponseEntity<?> deleteCarImageById(@PathVariable("image-id") Integer imageId) throws IOException {
+        carService.deleteImage(imageId);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
