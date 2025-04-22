@@ -5,6 +5,7 @@ import com.lindtsey.pahiramcar.car.CarRepository;
 import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.customer.CustomerRepository;
 import com.lindtsey.pahiramcar.enums.ImageOwnerType;
+import com.lindtsey.pahiramcar.enums.ReservationStatus;
 import com.lindtsey.pahiramcar.reservations.Reservation;
 import com.lindtsey.pahiramcar.reservations.ReservationRepository;
 import com.lindtsey.pahiramcar.images.Image;
@@ -39,6 +40,13 @@ public class BookingService {
 
     @Transactional
     public Booking saveWithBookingProofImages(BookingDTO dto, MultipartFile[] multipartFiles) throws IOException {
+
+        //Before we save the booking, we change the status of the reservation
+        Reservation reservation = reservationRepository.findById(dto.reservationId()).orElseThrow(() -> new RuntimeException("Reservation not found"));
+        reservation.setStatus(ReservationStatus.BOOKED);
+        reservationRepository.save(reservation);
+
+        // Begin saving the reservation
         Booking booking = toBooking(dto);
         Booking savedBooking = bookingRepository.save(booking);
 

@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ReservationController {
@@ -15,7 +16,7 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @GetMapping("/api/{customer-id}/reservations")
+    @GetMapping("/api/customers/{customer-id}/reservations")
     public ResponseEntity<?> findReservationsByCustomerId(@PathVariable("customer-id") Integer customerId) {
         List<Reservation> customerReservations = reservationService.findReservationsByCustomerId(customerId);
         return new ResponseEntity<>(customerReservations, HttpStatus.OK);
@@ -23,10 +24,19 @@ public class ReservationController {
 
     @PostMapping("/api/reservations")
     public ResponseEntity<?> saveReservation(@RequestBody ReservationDTO dto) {
-        System.out.println(dto.toString());
         Reservation reservation = reservationService.saveReservation(dto);
 
         return new ResponseEntity<>(reservation, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/api/reservation/{reservation-id}/status")
+    public ResponseEntity<?> updateReservationStatus(@PathVariable("reservation-id") Integer reservationId, @RequestBody Map<String, String> request) {
+
+        String newStatus = request.get("status");
+
+        reservationService.updateStatus(reservationId, newStatus);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/api/reservations/{reservation-id}")

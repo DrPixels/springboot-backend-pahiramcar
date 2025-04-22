@@ -1,11 +1,11 @@
 package com.lindtsey.pahiramcar.reservations;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record ReservationDTO(
-        LocalDate reservationStartDate,
-        LocalDate reservationEndDate,
-        String status,
+        LocalDateTime reservationStartDate,
+        LocalDateTime reservationEndDate,
         Integer customerId,
         Integer carId
 ) {

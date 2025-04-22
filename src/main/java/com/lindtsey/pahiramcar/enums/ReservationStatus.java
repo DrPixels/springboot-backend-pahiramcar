@@ -10,6 +10,9 @@ public enum ReservationStatus {
     @JsonProperty("Booked")
     BOOKED,
 
+    @JsonProperty("Cancelled")
+    CANCELLED,
+
     @JsonProperty("Expired")
     EXPIRED,
 

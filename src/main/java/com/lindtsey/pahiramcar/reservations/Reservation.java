@@ -3,11 +3,13 @@ package com.lindtsey.pahiramcar.reservations;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.customer.Customer;
+import com.lindtsey.pahiramcar.enums.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -32,8 +34,7 @@ public class Reservation {
     )
     private Car car;
 
-    private LocalDate reservationStartDate;
-    private LocalDate reservationEndDate;
-    private String status;
-
+    private LocalDateTime reservationStartDate;
+    private LocalDateTime reservationEndDate;
+    private ReservationStatus status;
 }

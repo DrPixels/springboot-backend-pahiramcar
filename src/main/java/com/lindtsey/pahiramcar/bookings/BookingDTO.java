@@ -2,12 +2,12 @@ package com.lindtsey.pahiramcar.bookings;
 
 import com.lindtsey.pahiramcar.enums.BookingStatus;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record BookingDTO(
         String driverLicenseNumber,
-        LocalDate startDate,
-        LocalDate endDate,
+        LocalDateTime startDate,
+        LocalDateTime endDate,
         Float totalAmount,
         BookingStatus status,
         Integer customerId,
