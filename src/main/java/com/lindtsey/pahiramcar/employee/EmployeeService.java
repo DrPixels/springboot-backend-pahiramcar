@@ -56,6 +56,7 @@ public class EmployeeService {
 
     public Employee toEmployee(EmployeeDTO dto) {
         Employee employee = new Employee();
+        employee.setRole(dto.role());
         employee.setUsername(dto.username());
         employee.setPassword(dto.password());
         employee.setFirstName(dto.firstName());

@@ -4,8 +4,10 @@ import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.car.CarRepository;
 import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.customer.CustomerRepository;
+import com.lindtsey.pahiramcar.enums.CarStatus;
 import com.lindtsey.pahiramcar.enums.ReservationStatus;
 import com.lindtsey.pahiramcar.utils.CarAlreadyReservedException;
+import com.lindtsey.pahiramcar.utils.PahiramCarConstants;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,29 +36,40 @@ public class ReservationService {
         reservationRepository.deleteById(reservationId);
     }
 
+    @Transactional
     public Reservation saveReservation(ReservationDTO dto) {
 
-        if(isCarReserved(dto.carId(), dto.reservationStartDate(), dto.reservationEndDate(), ReservationStatus.AVAILABLE)) {
+        // Check if the car is already reserved
+        Car car = carRepository.findById(dto.carId()).orElseThrow(() -> new RuntimeException("Car not found"));
+
+        if(car.getStatus() == CarStatus.RESERVED || car.getStatus() == CarStatus.BOOKED) {
             throw new CarAlreadyReservedException("Car is already reserved for the selected dates!");
         }
 
+        car.setStatus(CarStatus.RESERVED);
+        carRepository.save(car);
+
+        // Save the reservation with the waiting for approval as default status
         Reservation reservation = toReservation(dto);
-        reservation.setStatus(ReservationStatus.AVAILABLE);
         return reservationRepository.save(reservation);
     }
 
-    public void updateStatus(Integer reservationId, String newStatus) {
+    public void cancelReservation(Integer reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new RuntimeException("Reservation not found"));
 
-        reservation.setStatus(ReservationStatus.valueOf(newStatus.toUpperCase()));
+        reservation.setStatus(ReservationStatus.CANCELLED);
 
         reservationRepository.save(reservation);
+
+        Car car = carRepository.findById(reservation.getCar().getCarId()).orElseThrow(() -> new RuntimeException("Car not found"));
+        car.setStatus(CarStatus.AVAILABLE);
+        carRepository.save(car);
     }
 
     private Reservation toReservation(ReservationDTO dto) {
         Reservation reservation = new Reservation();
         reservation.setReservationStartDate(dto.reservationStartDate());
-        reservation.setReservationEndDate(dto.reservationEndDate());
+        reservation.setReservationEndDate(dto.reservationStartDate().plusDays(PahiramCarConstants.RESERVATION_DAYS));
 
         Car car = carRepository.findById(dto.carId()).orElseThrow(() -> new RuntimeException("Car not found"));
         Customer customer = customerRepository.findById(dto.customerId()).orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -67,8 +80,8 @@ public class ReservationService {
         return reservation;
     }
 
-    private boolean isCarReserved(Integer carId, LocalDateTime startDate, LocalDateTime endDate, ReservationStatus status) {
-        return reservationRepository.isCarReserved(carId, startDate, endDate, status);
+    private boolean isCarReserved(Integer carId, LocalDateTime startDate, LocalDateTime endDate) {
+        return reservationRepository.isCarReserved(carId, startDate, endDate, ReservationStatus.WAITING_FOR_APPROVAL);
     }
 
     //For auto-updating the status of the reservation once they are expired
@@ -77,7 +90,7 @@ public class ReservationService {
     protected void updatedExpiredReservation() {
         LocalDateTime now = LocalDateTime.now();
         reservationRepository.updatedExpiredReservation(now,
-                ReservationStatus.AVAILABLE,
+                ReservationStatus.WAITING_FOR_APPROVAL,
                 ReservationStatus.EXPIRED);
     }
 

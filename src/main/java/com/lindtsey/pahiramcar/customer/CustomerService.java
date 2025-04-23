@@ -30,18 +30,23 @@ public class CustomerService {
     @Transactional
     public Customer saveCustomerImage(Integer customerId, MultipartFile[] multipartFiles) throws IOException {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
+        Customer savedCustomer = null;
 
         if(customer.getCustomerImage() != null) {
             Image currentCustomerImage = customer.getCustomerImage();
+
+            customer.setCustomerImage(null);
+            savedCustomer = customerRepository.save(customer);
 
             imageService.deleteImage(currentCustomerImage.getImageId());
         }
 
         List<Image> savedImages = imageService.saveImages(multipartFiles, ImageOwnerType.CUSTOMER, customerId);
 
-        customer.setCustomerImage(savedImages.getFirst());
+        assert savedCustomer != null;
+        savedCustomer.setCustomerImage(savedImages.getFirst());
 
-        return customer;
+        return savedCustomer;
     }
 
 

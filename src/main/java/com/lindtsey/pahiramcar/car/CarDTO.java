@@ -13,6 +13,5 @@ public record CarDTO(String name,
         FuelType fuelType,
         Integer seats,
         Double pricePerDay,
-        CarStatus status,
         String description) {
 }

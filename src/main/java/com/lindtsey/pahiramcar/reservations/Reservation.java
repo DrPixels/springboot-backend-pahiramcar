@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -36,5 +35,5 @@ public class Reservation {
 
     private LocalDateTime reservationStartDate;
     private LocalDateTime reservationEndDate;
-    private ReservationStatus status;
+    private ReservationStatus status = ReservationStatus.WAITING_FOR_APPROVAL;
 }

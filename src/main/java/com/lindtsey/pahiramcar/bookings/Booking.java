@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,19 +31,6 @@ public class Booking {
     )
     private Transaction transaction;
 
-    @ManyToOne
-    @JoinColumn(
-            name = "customer_id"
-    )
-    @JsonBackReference
-    private Customer customer;
-
-    @OneToOne
-    @JoinColumn(
-            name = "car_id"
-    )
-    private Car car;
-
     @OneToOne
     @JoinColumn(
             name = "reservation_id"
@@ -54,10 +42,16 @@ public class Booking {
     )
     private List<Image> bookingProofImages;
 
+    private String renterFullName;
+    private String plateNumber;
     private String driverLicenseNumber;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private float totalAmount;
-    private float penalty;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
+    private LocalDateTime actualReturnDate;
+    private double totalAmount;
+    private double penalty = 0;
     private BookingStatus status;
+    private boolean isOverDue = false;
+    private Long overdueDurationInMinutes = 0L;
+
 }

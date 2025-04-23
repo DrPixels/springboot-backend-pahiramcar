@@ -16,7 +16,7 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @GetMapping("/api/customers/{customer-id}/reservations")
+    @GetMapping("/api/reservations/{customer-id}")
     public ResponseEntity<?> findReservationsByCustomerId(@PathVariable("customer-id") Integer customerId) {
         List<Reservation> customerReservations = reservationService.findReservationsByCustomerId(customerId);
         return new ResponseEntity<>(customerReservations, HttpStatus.OK);
@@ -29,20 +29,18 @@ public class ReservationController {
         return new ResponseEntity<>(reservation, HttpStatus.CREATED);
     }
 
-    @PutMapping("/api/reservation/{reservation-id}/status")
-    public ResponseEntity<?> updateReservationStatus(@PathVariable("reservation-id") Integer reservationId, @RequestBody Map<String, String> request) {
+    @PutMapping("/api/reservation/{reservation-id}/cancel")
+    public ResponseEntity<?> cancelReservation(@PathVariable("reservation-id") Integer reservationId) {
 
-        String newStatus = request.get("status");
+        reservationService.cancelReservation(reservationId);
 
-        reservationService.updateStatus(reservationId, newStatus);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("Reservation cancelled successfully.", HttpStatus.OK);
     }
 
     @DeleteMapping("/api/reservations/{reservation-id}")
     public ResponseEntity<?> deleteReservation(@PathVariable("reservation-id") Integer reservationId) {
         reservationService.deleteReservation(reservationId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Reservation deleted successfully.", HttpStatus.OK);
     }
 }

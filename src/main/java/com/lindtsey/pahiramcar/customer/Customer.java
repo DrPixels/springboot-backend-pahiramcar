@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -59,6 +60,7 @@ public class Customer {
     private String email;
 
     @Column(updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @OneToOne(
@@ -73,16 +75,12 @@ public class Customer {
     @JsonManagedReference
     private List<Reservation> reservations = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "customer"
-    )
-    @JsonManagedReference
+    @OneToMany
+    @JoinColumn(name = "customer_id")
     private List<Booking> bookings = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "customer"
-    )
-    @JsonManagedReference
+    @OneToMany
+    @JoinColumn(name = "customer_id")
     private List<Transaction> transactions = new ArrayList<>();
 
 }

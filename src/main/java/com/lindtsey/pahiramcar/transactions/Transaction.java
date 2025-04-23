@@ -9,6 +9,9 @@ import com.lindtsey.pahiramcar.enums.PaymentMode;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +20,7 @@ import lombok.NoArgsConstructor;
 public class Transaction {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer transactionId;
 
     @ManyToOne
@@ -31,21 +35,10 @@ public class Transaction {
     )
     private Booking booking;
 
-    @ManyToOne
-    @JoinColumn(
-            name = "customer_id"
-    )
-    @JsonBackReference
-    private Customer customer;
-
-    @OneToOne
-    @JoinColumn(
-            name = "car_id"
-    )
-    private Car car;
-
-    private Float amountDue;
-    private Float amountPaid;
+    @CreationTimestamp
+    private LocalDateTime transactionDate;
+    private double carRentalPaid;
+    private double penaltyPaid;
     private PaymentMode paymentMode;
 
 }

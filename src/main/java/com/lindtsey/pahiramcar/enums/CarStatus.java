@@ -10,5 +10,5 @@ public enum CarStatus {
     RESERVED,
 
     @JsonProperty("Rented")
-    RENTED
+    BOOKED
 }

@@ -31,7 +31,7 @@ public class Car {
     private FuelType fuelType;
     private Integer seats;
     private Double pricePerDay;
-    private CarStatus status;
+    private CarStatus status = CarStatus.AVAILABLE;
     private String description;
 
     @OneToMany(

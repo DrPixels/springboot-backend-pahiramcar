@@ -48,13 +48,13 @@ public class CarController {
     @DeleteMapping("/api/cars/{car-id}")
     public ResponseEntity<?> deleteCarById(@PathVariable("car-id") Integer carId) {
         carService.deleteCarById(carId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Car has been deleted successfully", HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/cars/{image-id}")
+    @DeleteMapping("/api/cars/images/{image-id}")
     public ResponseEntity<?> deleteCarImageById(@PathVariable("image-id") Integer imageId) throws IOException {
         carService.deleteImage(imageId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Car image has been deleted successfully", HttpStatus.OK);
     }
 }

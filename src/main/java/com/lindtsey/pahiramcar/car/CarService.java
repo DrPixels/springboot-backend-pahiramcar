@@ -69,7 +69,6 @@ public class CarService {
         car.setFuelType(dto.fuelType());
         car.setSeats(dto.seats());
         car.setPricePerDay(dto.pricePerDay());
-        car.setStatus(dto.status());
         car.setDescription(dto.description());
 
         return car;

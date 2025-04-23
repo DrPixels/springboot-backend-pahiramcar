@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public enum ReservationStatus {
 
     @JsonProperty("Available")
-    AVAILABLE,
+    WAITING_FOR_APPROVAL,
 
     @JsonProperty("Booked")
     BOOKED,

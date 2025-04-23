@@ -11,6 +11,7 @@ import com.lindtsey.pahiramcar.employee.Employee;
 import com.lindtsey.pahiramcar.employee.EmployeeRepository;
 import com.lindtsey.pahiramcar.enums.ImageOwnerType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -89,12 +90,13 @@ public class ImageService {
         return images;
     }
 
+    @Transactional
     public void deleteImage(Integer imageId) throws IOException {
         // Get from the database
         Image image = imageRepository.findById(imageId).orElseThrow(() -> new RuntimeException("Image not found"));
 
         // Delete from the database
-        imageRepository.deleteById(image.getImageId());
+        imageRepository.deleteImageByImageId(imageId);
 
         // Delete from the cloudinary
         Map m = cloudinaryService.delete(image.getPublicId());
