@@ -6,8 +6,8 @@ import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.customer.CustomerRepository;
 import com.lindtsey.pahiramcar.enums.CarStatus;
 import com.lindtsey.pahiramcar.enums.ReservationStatus;
-import com.lindtsey.pahiramcar.utils.CarAlreadyReservedException;
-import com.lindtsey.pahiramcar.utils.PahiramCarConstants;
+import com.lindtsey.pahiramcar.utils.constants;
+import com.lindtsey.pahiramcar.utils.exceptions.CarAlreadyReservedException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +69,7 @@ public class ReservationService {
     private Reservation toReservation(ReservationDTO dto) {
         Reservation reservation = new Reservation();
         reservation.setReservationStartDate(dto.reservationStartDate());
-        reservation.setReservationEndDate(dto.reservationStartDate().plusDays(PahiramCarConstants.RESERVATION_DAYS));
+        reservation.setReservationEndDate(dto.reservationStartDate().plusDays(constants.PahiramCarConstants.RESERVATION_DAYS));
 
         Car car = carRepository.findById(dto.carId()).orElseThrow(() -> new RuntimeException("Car not found"));
         Customer customer = customerRepository.findById(dto.customerId()).orElseThrow(() -> new RuntimeException("Customer not found"));

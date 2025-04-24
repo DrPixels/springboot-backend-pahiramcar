@@ -2,7 +2,6 @@ package com.lindtsey.pahiramcar.bookings;
 
 import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.car.CarRepository;
-import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.customer.CustomerRepository;
 import com.lindtsey.pahiramcar.enums.BookingStatus;
 import com.lindtsey.pahiramcar.enums.CarStatus;
@@ -15,9 +14,9 @@ import com.lindtsey.pahiramcar.images.ImageService;
 import com.lindtsey.pahiramcar.transactions.Transaction;
 import com.lindtsey.pahiramcar.transactions.TransactionDTO;
 import com.lindtsey.pahiramcar.transactions.TransactionService;
-import com.lindtsey.pahiramcar.utils.DriversLicenseCurrentlyUsedInBookingException;
-import com.lindtsey.pahiramcar.utils.PahiramCarConstants;
-import com.lindtsey.pahiramcar.utils.ReservationCancelledOrExpiredException;
+import com.lindtsey.pahiramcar.utils.constants;
+import com.lindtsey.pahiramcar.utils.exceptions.DriversLicenseCurrentlyUsedInBookingException;
+import com.lindtsey.pahiramcar.utils.exceptions.ReservationCancelledOrExpiredException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,7 +134,7 @@ public class BookingService {
         booking.setEndDateTime(dto.endDateTime());
 
         long minutesDuration = Duration.between(booking.getStartDateTime(), booking.getEndDateTime()).toMinutes();
-        double days = Math.ceil((double) minutesDuration / PahiramCarConstants.MINUTES_PER_DAY);
+        double days = Math.ceil((double) minutesDuration / constants.PahiramCarConstants.MINUTES_PER_DAY);
 
         Reservation reservation = reservationRepository.findById(dto.reservationId()).orElseThrow(() -> new RuntimeException("Reservation not found"));
         double totalAmount = reservation.getCar().getPricePerDay() * days;
@@ -168,10 +167,10 @@ public class BookingService {
 
             // Compute the number of overdue days
             // In here, even an hour past day is considered already a day
-            Long overDueDays = (long) Math.ceil((double) overDueDurationInMinutes / PahiramCarConstants.MINUTES_PER_DAY);
+            Long overDueDays = (long) Math.ceil((double) overDueDurationInMinutes / constants.PahiramCarConstants.MINUTES_PER_DAY);
 
             // Compute the penalty
-            double penalty = overDueDays * booking.getReservation().getCar().getPricePerDay() * PahiramCarConstants.PENALTY_RATE;
+            double penalty = overDueDays * booking.getReservation().getCar().getPricePerDay() * constants.PahiramCarConstants.PENALTY_RATE;
 
             booking.setPenalty(penalty);
         }

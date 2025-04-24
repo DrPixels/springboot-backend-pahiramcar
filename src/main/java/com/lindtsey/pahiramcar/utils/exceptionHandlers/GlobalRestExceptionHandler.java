@@ -1,6 +1,9 @@
-package com.lindtsey.pahiramcar.utils;
+package com.lindtsey.pahiramcar.utils.exceptionHandlers;
 
 
+import com.lindtsey.pahiramcar.utils.exceptions.CarAlreadyReservedException;
+import com.lindtsey.pahiramcar.utils.exceptions.DriversLicenseCurrentlyUsedInBookingException;
+import com.lindtsey.pahiramcar.utils.exceptions.ReservationCancelledOrExpiredException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;

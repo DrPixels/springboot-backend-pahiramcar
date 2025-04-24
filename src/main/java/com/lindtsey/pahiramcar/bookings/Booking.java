@@ -1,6 +1,5 @@
 package com.lindtsey.pahiramcar.bookings;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.enums.BookingStatus;
@@ -8,10 +7,12 @@ import com.lindtsey.pahiramcar.reservations.Reservation;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.transactions.Transaction;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,16 +43,34 @@ public class Booking {
     )
     private List<Image> bookingProofImages;
 
+
+    @NotBlank(message = "Renter's Full name is required.")
+    @Column(nullable = false)
     private String renterFullName;
-    private String plateNumber;
+
+    @NotBlank(message = "Driver's License Number is required.")
+    @Column(nullable = false)
     private String driverLicenseNumber;
+
+    @NotEmpty(message = "Start date time of the booking is required.")
+    @Column(nullable = false)
     private LocalDateTime startDateTime;
+
+    @NotEmpty(message = "End date time of the booking is required.")
+    @Column(nullable = false)
     private LocalDateTime endDateTime;
+
     private LocalDateTime actualReturnDate;
+
+    @Range(min = 0)
     private double totalAmount;
+
+    @Range(min = 0)
     private double penalty = 0;
+
+    @Column(nullable = false)
     private BookingStatus status;
+
     private boolean isOverDue = false;
     private Long overdueDurationInMinutes = 0L;
-
 }

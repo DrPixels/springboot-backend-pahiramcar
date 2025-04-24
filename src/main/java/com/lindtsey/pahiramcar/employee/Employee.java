@@ -5,10 +5,12 @@ import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.transactions.Transaction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,12 +26,15 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer employeeId;
 
+    @NotEmpty(message = "Admin role is required.")
     @Column(nullable = false)
     private AdminRoles role;
 
+    @NotBlank(message = "Username is required.")
     @Column(nullable = false)
     private String username;
 
+    @NotBlank(message = "Password is required.")
     @Column(nullable = false)
     private String password;
 
@@ -57,6 +62,7 @@ public class Employee {
     private String email;
 
     @Column(updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @OneToOne(

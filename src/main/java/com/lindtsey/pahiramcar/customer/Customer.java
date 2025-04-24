@@ -30,9 +30,11 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer customerId;
 
+    @NotBlank(message = "Username is required.")
     @Column(nullable = false)
     private String username;
 
+    @NotBlank(message = "Password is required.")
     @Column(nullable = false)
     private String password;
 

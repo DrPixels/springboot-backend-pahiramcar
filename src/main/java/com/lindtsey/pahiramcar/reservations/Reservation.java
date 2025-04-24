@@ -5,6 +5,8 @@ import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.enums.ReservationStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,7 +35,15 @@ public class Reservation {
     )
     private Car car;
 
+    @NotBlank(message = "Reservation start date is required.")
+    @Column(nullable = false)
     private LocalDateTime reservationStartDate;
+
+    @NotBlank(message = "Reservation end date is required.")
+    @Column(nullable = false)
     private LocalDateTime reservationEndDate;
+
+    @NotEmpty(message = "Reservation status is required.")
+    @Column(nullable = false)
     private ReservationStatus status = ReservationStatus.WAITING_FOR_APPROVAL;
 }
