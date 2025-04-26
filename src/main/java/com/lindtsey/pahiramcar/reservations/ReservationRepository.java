@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
 
-    List<Reservation> findReservationsByCustomer_UserId(Integer customerId);
+    List<Reservation> findReservationsByCustomer_UserIdOrderByStartDateTimeAsc(Integer customerId);
 
     @Query("SELECT COUNT(r) > 0 FROM Reservation r " +
             "WHERE r.car.carId = :carId " +
@@ -37,7 +37,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
                                    @Param("newStatus") ReservationStatus newStatus);
 
     // For counting reservation per Customer
-    int countReservationsByCustomer_UserIdAndStatus(Integer customerId, ReservationStatus status);
+    int countActiveReservationsByCustomer_UserIdAndStatus(Integer customerId, ReservationStatus status);
+
+    int countActiveReservationsByCustomer_UserIdAndStatusAndStartDateTimeBetween(Integer customerId, ReservationStatus status, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     Integer customer(Customer customer);
 }

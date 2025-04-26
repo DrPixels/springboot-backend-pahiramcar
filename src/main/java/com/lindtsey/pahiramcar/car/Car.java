@@ -51,14 +51,14 @@ public class Car {
     @Column(nullable = false)
     private String engineNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String chassisNumber;
 
     @Column(nullable = false)
     private Integer seats;
 
     @Column(nullable = false)
-    private double pricePerDay;
+    private Double pricePerDay;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

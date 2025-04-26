@@ -41,6 +41,6 @@ public record CarDTO(
         @NotNull(message = "Rent price per day is required.")
         @Range(min = 0) Double pricePerDay,
 
-        @NotEmpty(message = "Car status is required.")
+        @NotBlank(message = "Car status is required.")
         String description) {
 }

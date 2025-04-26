@@ -1,5 +1,6 @@
 package com.lindtsey.pahiramcar.car;
 
+import com.lindtsey.pahiramcar.utils.sorter.CarSorter;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class CarController {
 
     // No authentication/authorization required
     // Get all of the cars available
-    @GetMapping("/api/cars")
+    @GetMapping("/api/admin/cars")
     public ResponseEntity<?> findAllCars() {
         List<Car> cars = carService.findAllCars();
 
@@ -28,8 +29,9 @@ public class CarController {
     }
 
     // Get the available cars
-    @GetMapping("/api/cars/available")
+    @GetMapping("/api/customer/cars/available")
     public ResponseEntity<?> findAvailableCars() {
+
         List<Car> availableCars = carService.findAvailableCars();
 
         return new ResponseEntity<>(availableCars, HttpStatus.OK);

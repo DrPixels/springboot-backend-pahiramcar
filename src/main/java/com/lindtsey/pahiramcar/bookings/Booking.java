@@ -24,11 +24,10 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer bookingId;
 
-    @OneToOne
-    @JoinColumn(
-            name = "transaction_id"
+    @OneToMany (
+            mappedBy = "booking"
     )
-    private Transaction transaction;
+    private List<Transaction> transactions;
 
     @OneToOne
     @JoinColumn(

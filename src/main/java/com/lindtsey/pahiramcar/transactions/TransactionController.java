@@ -1,11 +1,13 @@
 package com.lindtsey.pahiramcar.transactions;
 
+import com.lindtsey.pahiramcar.transactions.miscellaneous.PenaltyRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -40,16 +42,23 @@ public class TransactionController {
         return new ResponseEntity<>(transaction, HttpStatus.OK);
     }
 
-    @PutMapping("/api/transactions/{transaction-id}/penalty")
-    public ResponseEntity<?> updateTransactionDueToPenalty (@PathVariable("transaction-id") Integer transactionId, Map<String, Double> request) {
+    @PutMapping("/api/booking/{booking-id}/transactions/penalty")
+    public ResponseEntity<?> saveTransactionDueToPenalty (@PathVariable("booking-id") Integer bookingId, @RequestBody TransactionDTO dto) {
 
-        Double penalty = request.get("penalty");
+        Transaction transaction = transactionService.saveTransactionDueToPenalty(bookingId, dto);
 
-        transactionService.updateTransactionDueToPenalty(transactionId, penalty);
-
-        return new ResponseEntity<>("Transaction has been updated.", HttpStatus.OK);
+        return new ResponseEntity<>(transaction, HttpStatus.OK);
     }
-    
+
+    @PutMapping("/api/booking/{booking-id}/transactions/car-damge")
+    public ResponseEntity<?> updateTransactionDueToCarDamage (@PathVariable("booking-id") Integer bookingId,
+                                                              @RequestPart("transaction") TransactionDTO dto,
+                                                              @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {
+
+        Transaction transaction = transactionService.saveTransactionDueToCarDamage(bookingId, dto, multipartFiles);
+
+        return new ResponseEntity<>(transaction, HttpStatus.OK);
+    }
 
     @DeleteMapping("/api/transactions/{transaction-id}")
     public ResponseEntity<?> deleteTransaction(@PathVariable("transaction-id") Integer transactionId) {

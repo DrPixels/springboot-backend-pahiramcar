@@ -1,16 +1,14 @@
 package com.lindtsey.pahiramcar.transactions;
 
 import com.lindtsey.pahiramcar.bookings.Booking;
-import com.lindtsey.pahiramcar.car.Car;
-import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.employee.Employee;
 import com.lindtsey.pahiramcar.enums.PaymentMode;
+import com.lindtsey.pahiramcar.enums.TransactionType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.validator.constraints.Range;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +16,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "Transactions")
+@SuperBuilder
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public class Transaction {
 
     @Id
@@ -26,11 +27,11 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(
-            name = "user_id"
+            name = "employee_id"
     )
     private Employee employee;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(
             name = "booking_id"
     )
@@ -38,23 +39,15 @@ public class Transaction {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDateTime transactionDate;
+    private LocalDateTime transactionDateTime;
+
+    @Enumerated(EnumType.STRING)
+    private TransactionType transactionType;
 
     @Column(nullable = false)
-    private double carRentalPaid;
-
-    private LocalDateTime penaltyPaidDateTime;
-
-    @Range(min = 0)
-    private double penaltyPaid;
-
-    private LocalDateTime carDamagePaidDateTime;
-
-    @Range(min = 0)
-    private double carDamagePaid;
+    private double amountPaid;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentMode paymentMode;
-
 }

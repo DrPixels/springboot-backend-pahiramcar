@@ -4,5 +4,6 @@ public enum ImageOwnerType {
     CAR,
     BOOKING,
     CUSTOMER,
-    EMPLOYEE
+    EMPLOYEE,
+    TRANSACTION
 }

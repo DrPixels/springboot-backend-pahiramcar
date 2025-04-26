@@ -4,6 +4,7 @@ import com.lindtsey.pahiramcar.enums.ImageOwnerType;
 import com.lindtsey.pahiramcar.enums.Role;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.images.ImageService;
+import com.lindtsey.pahiramcar.reports.Time;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,6 +78,14 @@ public class CustomerService {
         customer.setNationality(dto.nationality());
         customer.setMaritalStatus(dto.maritalStatus());
         return customer;
+    }
+
+    public int countTotalCustomer() {
+        return (int) customerRepository.count();
+    }
+
+    public int countTotalCustomerBeforeThisMonth() {
+        return customerRepository.countCustomerByCreatedAtBefore(Time.startOfThisMonth());
     }
 
 }

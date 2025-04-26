@@ -6,6 +6,7 @@ import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.customer.CustomerRepository;
 import com.lindtsey.pahiramcar.enums.CarStatus;
 import com.lindtsey.pahiramcar.enums.ReservationStatus;
+import com.lindtsey.pahiramcar.utils.sorter.ReservationSorter;
 import com.lindtsey.pahiramcar.utils.constants;
 import com.lindtsey.pahiramcar.utils.exceptions.CarAlreadyReservedException;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,7 +30,16 @@ public class ReservationService {
     }
 
     public List<Reservation> findReservationsByCustomerId(Integer customerId) {
-        return reservationRepository.findReservationsByCustomer_UserId(customerId);
+
+
+        // Unsorted version from the database
+        List<Reservation> reservations = reservationRepository.findReservationsByCustomer_UserIdOrderByStartDateTimeAsc(customerId);
+
+        // Sorts the reservations based on their start date and status
+        // Refer to the ReservationStatus enum for ordering
+        ReservationSorter.mergeSortReservations(reservations);
+
+        return reservations;
     }
 
     public void deleteReservation(Integer reservationId) {

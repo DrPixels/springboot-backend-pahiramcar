@@ -3,20 +3,21 @@ package com.lindtsey.pahiramcar.bookings;
 import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.car.CarRepository;
 import com.lindtsey.pahiramcar.customer.CustomerRepository;
-import com.lindtsey.pahiramcar.enums.BookingStatus;
-import com.lindtsey.pahiramcar.enums.CarStatus;
-import com.lindtsey.pahiramcar.enums.ImageOwnerType;
-import com.lindtsey.pahiramcar.enums.ReservationStatus;
+import com.lindtsey.pahiramcar.enums.*;
+import com.lindtsey.pahiramcar.reports.Time;
 import com.lindtsey.pahiramcar.reservations.Reservation;
 import com.lindtsey.pahiramcar.reservations.ReservationRepository;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.images.ImageService;
 import com.lindtsey.pahiramcar.transactions.Transaction;
 import com.lindtsey.pahiramcar.transactions.TransactionDTO;
+import com.lindtsey.pahiramcar.transactions.TransactionRepository;
 import com.lindtsey.pahiramcar.transactions.TransactionService;
+import com.lindtsey.pahiramcar.transactions.childClass.BookingPaymentTransaction;
 import com.lindtsey.pahiramcar.utils.constants;
 import com.lindtsey.pahiramcar.utils.exceptions.DriversLicenseCurrentlyUsedInBookingException;
 import com.lindtsey.pahiramcar.utils.exceptions.ReservationCancelledOrExpiredException;
+import com.lindtsey.pahiramcar.utils.sorter.BookingSorter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,19 +37,21 @@ public class BookingService {
     private final CarRepository carRepository;
     private final ReservationRepository reservationRepository;
     private final TransactionService transactionService;
+    private final TransactionRepository transactionRepository;
 
     public BookingService(BookingRepository bookingRepository,
                           ImageService imageService,
                           CustomerRepository customerRepository,
                           CarRepository carRepository,
                           ReservationRepository reservationRepository,
-                          TransactionService transactionService) {
+                          TransactionService transactionService, TransactionRepository transactionRepository) {
         this.bookingRepository = bookingRepository;
         this.imageService = imageService;
         this.customerRepository = customerRepository;
         this.carRepository = carRepository;
         this.reservationRepository = reservationRepository;
         this.transactionService = transactionService;
+        this.transactionRepository = transactionRepository;
     }
 
     @Transactional
@@ -83,8 +86,9 @@ public class BookingService {
         booking.setBookingProofImages(bookingProofImages);
 
         // Create the associated transaction within the booking
-        Transaction savedTransaction = transactionService.saveTransactionFromBooking(booking, transactionDTO);
-        booking.setTransaction(savedTransaction);
+        // Transaction Type: Booking Payment
+        Transaction savedTransaction = transactionService.saveTransactionFromBooking(bookingId, transactionDTO);
+        savedBooking.getTransactions().add(savedTransaction);
 
         return savedBooking;
     }
@@ -108,7 +112,25 @@ public class BookingService {
 
     // Find the bookings of the customer based on its ID
     public List<Booking> findBookingByCustomerId(Integer customerId) {
-        return bookingRepository.findBookingsByReservation_Customer_UserId(customerId);
+
+        // Unsorted version from the database
+        List<Booking> bookings = bookingRepository.findBookingsByReservation_Customer_UserId(customerId);
+
+        // Sorts the bookings based on their start date and status
+        // Refer to the BookingStatus enum for ordering
+        BookingSorter.mergeSortBookings(bookings);
+
+        return bookings;
+    }
+
+    public List<Booking> findCompletedBookingsByCustomerId(Integer customerId) {
+
+        // Unsorted Version
+        List<Booking> bookings = bookingRepository.findBookingsByReservation_Customer_UserIdAndStatus(customerId, BookingStatus.COMPLETED);
+
+        BookingSorter.mergeSortBookings(bookings);
+
+        return bookings;
     }
 
 //    public List<Booking> findBookingByCarId(Integer customerId) {
@@ -138,7 +160,7 @@ public class BookingService {
         double days = Math.ceil((double) minutesDuration / constants.PahiramCarConstants.MINUTES_PER_DAY);
 
         Reservation reservation = reservationRepository.findById(dto.reservationId()).orElseThrow(() -> new RuntimeException("Reservation not found"));
-        double totalAmount = reservation.getCar().getPricePerDay() * days;
+        double totalAmount = reservation.getCar().getPricePerDay() * days + constants.PahiramCarConstants.REFUNDABLE_DEPOSIT;
         booking.setTotalAmount(totalAmount);
 
         booking.setStatus(BookingStatus.ONGOING);
@@ -166,12 +188,12 @@ public class BookingService {
             Long overDueDurationInMinutes = Duration.between(booking.getEndDateTime(), actualReturnDate).toMinutes();
             booking.setOverdueDurationInMinutes(overDueDurationInMinutes);
 
-            // Compute the number of overdue days
-            // In here, even an hour past day is considered already a day
-            Long overDueDays = (long) Math.ceil((double) overDueDurationInMinutes / constants.PahiramCarConstants.MINUTES_PER_DAY);
+            // Compute the number of overdue hours
+            // In here, even a minute past hour is considered already a hour
+            long overDueHours = (long) Math.ceil((double) overDueDurationInMinutes / constants.PahiramCarConstants.MINUTES_PER_HOUR);
 
             // Compute the penalty
-            double penalty = overDueDays * booking.getReservation().getCar().getPricePerDay() * constants.PahiramCarConstants.PENALTY_RATE;
+            double penalty = overDueHours * constants.PahiramCarConstants.PENALTY_PER_HOUR;
 
             booking.setPenalty(penalty);
         }
@@ -184,6 +206,57 @@ public class BookingService {
         Car car = carRepository.findById(booking.getReservation().getCar().getCarId()).orElseThrow(() -> new RuntimeException("Car not found"));
         car.setStatus(CarStatus.AVAILABLE);
         carRepository.save(car);
+
+        // Deduct the refundable deposit
+        BookingPaymentTransaction transaction = (BookingPaymentTransaction) transactionRepository.findTransactionByBooking_BookingIdAndTransactionType(bookingId, TransactionType.BOOKING_PAYMENT);
+        transaction.setRefundableDepositClaimed(true);
+
+        transactionRepository.save(transaction);
+    }
+
+    public double calculateAverageRentalTimeInDays() {
+        List<Object[]> results = bookingRepository.findStartAndEndDateTimes();
+
+        long totalDurationInSeconds = 0;
+
+        for (Object[] result : results) {
+            LocalDateTime startDateTime = (LocalDateTime) result[0];
+            LocalDateTime endDateTime = (LocalDateTime) result[1];
+
+            totalDurationInSeconds += Duration.between(startDateTime, endDateTime).getSeconds();
+        }
+
+        return results.isEmpty() ? 0 : totalDurationInSeconds / (double) results.size() / constants.PahiramCarConstants.SECONDS_PER_DAY;
+    }
+
+    public double calculateAverageRentalTimeInDaysBeforeThisMonth() {
+        List<Object[]> results = bookingRepository.findStartAndEndDateTimesBefore(Time.startOfThisMonth());
+
+        long totalDurationInSeconds = 0;
+
+        for (Object[] result : results) {
+            LocalDateTime startDateTime = (LocalDateTime) result[0];
+            LocalDateTime endDateTime = (LocalDateTime) result[1];
+
+            totalDurationInSeconds += Duration.between(startDateTime, endDateTime).getSeconds();
+        }
+
+        return results.isEmpty() ? 0 : totalDurationInSeconds / (double) results.size() / constants.PahiramCarConstants.SECONDS_PER_DAY;
+    }
+
+    public double calculateAverageRentalTimeInDaysBetween(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        List<Object[]> results = bookingRepository.findStartAndEndDateTimesBetween(startDateTime, endDateTime);
+
+        long totalDurationInSeconds = 0;
+
+        for (Object[] result : results) {
+            LocalDateTime resultStartDateTime = (LocalDateTime) result[0];
+            LocalDateTime resultEndDateTime = (LocalDateTime) result[1];
+
+            totalDurationInSeconds += Duration.between(resultStartDateTime, resultEndDateTime).getSeconds();
+        }
+
+        return results.isEmpty() ? 0 : totalDurationInSeconds / (double) results.size() / constants.PahiramCarConstants.SECONDS_PER_DAY;
     }
 
     //For auto-updating the status of the booking once they are due already

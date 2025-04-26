@@ -5,6 +5,7 @@ import com.lindtsey.pahiramcar.enums.ImageOwnerType;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.images.ImageService;
 import com.lindtsey.pahiramcar.utils.exceptions.CarHasBookingCannotDeleteException;
+import com.lindtsey.pahiramcar.utils.sorter.CarSorter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +28,13 @@ public class CarService {
     }
 
     public List<Car> findAvailableCars() {
-        return carRepository.findCarByStatus(CarStatus.AVAILABLE);
+        List<Car> availableCars = carRepository.findCarByStatus(CarStatus.AVAILABLE);
+
+        // Sorts the bookings based on their start date and status
+        // Refer to the BookingStatus enum for ordering
+        CarSorter.mergeSortBookings(availableCars);
+
+        return availableCars;
     }
 
     @Transactional

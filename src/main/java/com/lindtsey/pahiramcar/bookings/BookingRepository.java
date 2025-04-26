@@ -16,6 +16,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findBookingsByReservation_Customer_UserId(Integer customerId);
 //    List<Booking> findBookingsByCar_CarId(Integer carId);
 
+    List<Booking> findBookingsByReservation_Customer_UserIdAndStatus(Integer customer_Id, BookingStatus status);
+
     @Query("SELECT COUNT(b) > 0 FROM Booking b " +
             "WHERE b.driverLicenseNumber = :driverLicenseNumber " +
             "AND b.status = :bookingStatus")
@@ -32,5 +34,29 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
                           @Param("currentTime") LocalDateTime now,
                           @Param("oldStatus") BookingStatus oldStatus);
 
-    int countBookingsByReservation_Customer_UserIdAndStatus(Integer customerId, BookingStatus bookingStatus);
+    int countActiveBookingsByReservation_Customer_UserIdAndStatus(Integer customerId, BookingStatus bookingStatus);
+
+    int countActiveBookingsByReservation_Customer_UserIdAndStatusAndStartDateTimeBetween(Integer customerId, BookingStatus bookingStatus, LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+    // For Report
+    // To get the total bookings between time
+    int countBookingsByStartDateTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+    int countBookingsByStartDateTimeBefore(LocalDateTime startDateTime);
+
+    @Query("SELECT b.startDateTime, b.endDateTime " +
+            "FROM Booking b")
+    List<Object[]> findStartAndEndDateTimes();
+
+    @Query("SELECT b.startDateTime, b.endDateTime " +
+            "FROM Booking b " +
+            "WHERE b.startDateTime < :startDateTime")
+    List<Object[]> findStartAndEndDateTimesBefore(@Param("startDateTime") LocalDateTime startDateTime);
+
+    @Query("SELECT b.startDateTime, b.endDateTime " +
+            "FROM Booking b " +
+            "WHERE b.startDateTime " +
+            "BETWEEN :startDateTime AND :endDateTime")
+    List<Object[]> findStartAndEndDateTimesBetween(@Param("startDateTime") LocalDateTime startDateTime,
+                                                   @Param("endDateTime") LocalDateTime endDateTime);
 }

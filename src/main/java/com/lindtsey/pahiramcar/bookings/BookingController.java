@@ -48,6 +48,16 @@ public class BookingController {
         return new ResponseEntity<>(customerBookings, HttpStatus.OK);
     }
 
+    @GetMapping("/api/customer/bookings/{customer-id}/complete")
+    public ResponseEntity<?> findCompletedBookingByCustomerId(@PathVariable("customer-id") Integer customerId) {
+
+        List<Booking> customerBookings = this.bookingService.findCompletedBookingsByCustomerId(customerId);
+
+        return new ResponseEntity<>(customerBookings, HttpStatus.OK);
+    }
+
+
+
 //    @GetMapping("/api/bookings/{car-id}")
 //    public ResponseEntity<?> findBookingByCarId(@PathVariable("car-id") Integer carId) {
 //
