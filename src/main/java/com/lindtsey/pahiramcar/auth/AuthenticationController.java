@@ -2,6 +2,7 @@ package com.lindtsey.pahiramcar.auth;
 
 import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.customer.CustomerDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/customer/register")
-    public ResponseEntity<?> registerCustomer(@RequestBody CustomerDTO dto) {
+    public ResponseEntity<?> registerCustomer(@Valid @RequestBody CustomerDTO dto) {
         return new ResponseEntity<>(authenticationService.register(dto), HttpStatus.OK);
     }
 

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -66,7 +67,7 @@ public class CustomerService {
 
     public Customer toCustomer(CustomerDTO dto) {
         Customer customer = new Customer();
-        customer.setRole(Role.USER);
+        customer.setRole(Role.CUSTOMER);
         customer.setUsername(dto.username());
         customer.setPassword(dto.password());
         customer.setFirstName(dto.firstName());
@@ -87,5 +88,10 @@ public class CustomerService {
     public int countTotalCustomerBeforeThisMonth() {
         return customerRepository.countCustomerByCreatedAtBefore(Time.startOfThisMonth());
     }
+
+    public int countTotalCustomerBetween(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return customerRepository.countCustomersByCreatedAtBetween(startDateTime, endDateTime);
+    }
+
 
 }

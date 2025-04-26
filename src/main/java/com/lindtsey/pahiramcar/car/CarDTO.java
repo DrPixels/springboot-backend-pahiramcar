@@ -32,7 +32,8 @@ public record CarDTO(
         @NotBlank(message = "Engine number is required.")
         String engineNumber,
 
-        @NotBlank(message = "Chassis number is required.")@Column(nullable = false)
+        @NotBlank(message = "Chassis number is required.")
+        @Column(nullable = false, unique = true)
         String chassisNumber,
 
         @NotNull(message = "Car seats is required.")

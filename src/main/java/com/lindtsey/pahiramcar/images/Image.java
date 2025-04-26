@@ -5,7 +5,7 @@ import com.lindtsey.pahiramcar.bookings.Booking;
 import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.employee.Employee;
-import com.lindtsey.pahiramcar.transactions.childClass.DamageRepairFeeTransaction;
+import com.lindtsey.pahiramcar.transactions.childClass.damageRepairFee.DamageRepairFeeTransaction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

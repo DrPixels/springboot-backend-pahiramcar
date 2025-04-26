@@ -1,6 +1,7 @@
 package com.lindtsey.pahiramcar.bookings;
 
 import com.lindtsey.pahiramcar.transactions.TransactionDTO;
+import com.lindtsey.pahiramcar.transactions.childClass.bookingPayment.BookingPaymentTransactionDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,10 +71,10 @@ public class BookingController {
     // Add new booking
     @PostMapping("/api/bookings")
     public ResponseEntity<?> saveBooking(@RequestPart("booking") @Valid BookingDTO bookingDTO,
-                                         @RequestPart("transaction") @Valid TransactionDTO transactionDTO,
+                                         @RequestPart("transaction") @Valid BookingPaymentTransactionDTO dto,
                                          @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {
 
-        Booking booking = bookingService.saveWithBookingProofImages(bookingDTO, transactionDTO, multipartFiles);
+        Booking booking = bookingService.saveWithBookingProofImages(bookingDTO, dto, multipartFiles);
 
         return new ResponseEntity<>(booking, HttpStatus.CREATED);
     }

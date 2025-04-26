@@ -1,5 +1,6 @@
 package com.lindtsey.pahiramcar.transactions;
 
+import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.enums.PaymentMode;
 import com.lindtsey.pahiramcar.enums.TransactionType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,40 +18,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 
     Transaction findTransactionByBooking_BookingIdAndTransactionType(Integer bookingId, TransactionType transactionType);
 
-    @Query("SELECT SUM(CASE WHEN t.isRefundableDepositClaimed " +
-            "THEN t.carRentalPaid - :deposit " +
-            "ELSE t.carRentalPaid " +
-            "END + COALESCE(t.penaltyPaid, 0)) " +
-            "FROM Transaction t")
-    Double totalRevenue(@Param("deposit") Double deposit);
-
-    @Query("SELECT SUM(CASE WHEN t.isRefundableDepositClaimed " +
-            "THEN t.carRentalPaid - :deposit " +
-            "ELSE t.carRentalPaid " +
-            "END + COALESCE(t.penaltyPaid, 0)) " +
+    @Query("SELECT SUM(t.amountPaid) " +
             "FROM Transaction t " +
-            "WHERE t.transactionDateTime " +
-            "BETWEEN :startDateOfMonth AND :endDateOfMonth")
-    Double totalRevenueBetweenThisTime(@Param("deposit") Double deposit,
-                                       @Param("startDateOfMonth")LocalDateTime startOfMonth,
-                                       @Param("endDateOfMonth") LocalDateTime endOfMonth);
+            "WHERE t.paymentMode = :paymentMode ")
+    Double totalRevenueByPaymentMode(@Param("paymentMode") PaymentMode paymentMode);
 
-    @Query("SELECT SUM(CASE WHEN t.isRefundableDepositClaimed " +
-            "THEN t.carRentalPaid - :deposit " +
-            "ELSE t.carRentalPaid " +
-            "END + COALESCE(t.penaltyPaid, 0)) " +
+    @Query("SELECT SUM(t.amountPaid) " +
             "FROM Transaction t " +
-            "WHERE t.transactionDateTime < :startOfMonth")
-    Double totalRevenueBeforeThisMonth(@Param("deposit") Double deposit,
-                                       @Param("startDateOfMonth")LocalDateTime startOfMonth);
+            "WHERE t.paymentMode = :paymentMode " +
+            "AND t.transactionDateTime " +
+            "BETWEEN :startDateTime AND :endDateTime")
+    Double totalRevenueByPaymentModeBetween(@Param("paymentMode") PaymentMode paymentMode,
+                                            @Param("startDateTime")LocalDateTime startDateTime,
+                                            @Param("endDateTime")LocalDateTime endDateTime);
 
-    @Query("SELECT SUM(CASE WHEN t.isRefundableDepositClaimed " +
-            "THEN t.carRentalPaid - :deposit " +
-            "ELSE t.carRentalPaid " +
-            "END + COALESCE(t.penaltyPaid, 0)) " +
-            "FROM Transaction t " +
-            "WHERE t.carRentalPaymentMode = :paymentMode " +
-            "OR t.penaltyPaymentMode = :paymentMode")
-    Double totalRevenueByPaymentMode(@Param("deposit") Double deposit,
-                                     @Param("paymentMode") PaymentMode paymentMode);
 }

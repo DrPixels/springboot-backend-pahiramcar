@@ -48,7 +48,7 @@ public class Car {
     @Column(nullable = false)
     private FuelType fuelType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String engineNumber;
 
     @Column(nullable = false, unique = true)

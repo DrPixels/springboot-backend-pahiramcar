@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public enum Role {
 
     @JsonProperty("User")
-    USER,
+    CUSTOMER,
 
     @JsonProperty("Admin")
     ADMIN,

@@ -13,11 +13,13 @@ import com.lindtsey.pahiramcar.transactions.Transaction;
 import com.lindtsey.pahiramcar.transactions.TransactionDTO;
 import com.lindtsey.pahiramcar.transactions.TransactionRepository;
 import com.lindtsey.pahiramcar.transactions.TransactionService;
-import com.lindtsey.pahiramcar.transactions.childClass.BookingPaymentTransaction;
+import com.lindtsey.pahiramcar.transactions.childClass.bookingPayment.BookingPaymentTransaction;
+import com.lindtsey.pahiramcar.transactions.childClass.bookingPayment.BookingPaymentTransactionDTO;
 import com.lindtsey.pahiramcar.utils.constants;
 import com.lindtsey.pahiramcar.utils.exceptions.DriversLicenseCurrentlyUsedInBookingException;
 import com.lindtsey.pahiramcar.utils.exceptions.ReservationCancelledOrExpiredException;
 import com.lindtsey.pahiramcar.utils.sorter.BookingSorter;
+import org.springframework.cglib.core.Local;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +57,7 @@ public class BookingService {
     }
 
     @Transactional
-    public Booking saveWithBookingProofImages(BookingDTO bookingDTO, TransactionDTO transactionDTO, MultipartFile[] multipartFiles) throws IOException {
+    public Booking saveWithBookingProofImages(BookingDTO bookingDTO, BookingPaymentTransactionDTO dto, MultipartFile[] multipartFiles) throws IOException {
 
         // Check if the reservation is valid
         Reservation reservation = reservationRepository.findById(bookingDTO.reservationId()).orElseThrow(() -> new RuntimeException("Reservation not found"));
@@ -87,7 +89,7 @@ public class BookingService {
 
         // Create the associated transaction within the booking
         // Transaction Type: Booking Payment
-        Transaction savedTransaction = transactionService.saveTransactionFromBooking(bookingId, transactionDTO);
+        Transaction savedTransaction = transactionService.saveTransactionFromBooking(bookingId, dto);
         savedBooking.getTransactions().add(savedTransaction);
 
         return savedBooking;
@@ -177,29 +179,8 @@ public class BookingService {
     public void returnCar(Integer bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        LocalDateTime actualReturnDate = LocalDateTime.now();
-
-        if(actualReturnDate.isAfter(booking.getEndDateTime())) {
-
-            // Set the overdue flag to true
-            booking.setOverDue(true);
-
-            // Compute the overDueDuration in minutes
-            Long overDueDurationInMinutes = Duration.between(booking.getEndDateTime(), actualReturnDate).toMinutes();
-            booking.setOverdueDurationInMinutes(overDueDurationInMinutes);
-
-            // Compute the number of overdue hours
-            // In here, even a minute past hour is considered already a hour
-            long overDueHours = (long) Math.ceil((double) overDueDurationInMinutes / constants.PahiramCarConstants.MINUTES_PER_HOUR);
-
-            // Compute the penalty
-            double penalty = overDueHours * constants.PahiramCarConstants.PENALTY_PER_HOUR;
-
-            booking.setPenalty(penalty);
-        }
-
-
         booking.setStatus(BookingStatus.COMPLETED);
+        booking.setActualReturnDate(LocalDateTime.now());
         bookingRepository.save(booking);
 
         // We change the status of the car

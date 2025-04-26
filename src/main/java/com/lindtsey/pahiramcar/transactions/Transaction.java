@@ -47,6 +47,8 @@ public class Transaction {
     @Column(nullable = false)
     private double amountPaid;
 
+    private String cardId;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentMode paymentMode;
