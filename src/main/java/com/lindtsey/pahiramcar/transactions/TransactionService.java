@@ -41,6 +41,10 @@ public class TransactionService {
         transactionRepository.save(transaction);
     }
 
+    public List<Transaction> findCustomerTransactionsByUserId(Integer id) {
+        return transactionRepository.findTransactionsByBooking_Reservation_Customer_UserId(id);
+    }
+
     public List<Transaction> findAllTransactions() {
         return transactionRepository.findAll();
     }

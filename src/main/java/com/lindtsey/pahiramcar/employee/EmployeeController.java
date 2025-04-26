@@ -32,21 +32,23 @@ public class EmployeeController {
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
-    @PostMapping("/api/employees")
-    public ResponseEntity<?> saveEmployee(@RequestBody EmployeeDTO dto) {
+    @PostMapping("/api/admin/register-new-employee")
+    public ResponseEntity<?> saveEmployee(@Valid @RequestBody EmployeeDTO dto) {
         Employee savedEmployee = this.employeeService.save(dto);
 
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }
 
-    @PostMapping("/api/employee/{employee-id}/image")
-    public ResponseEntity<?> saveCustomerImage(@Valid @PathVariable("employee-id") Integer employeeId, @RequestPart("image") MultipartFile[] multipartFiles) throws IOException {
+    // Employee/Administrator
+    @PostMapping("/api/employee/{employee-id}/add-employee-image")
+    public ResponseEntity<?> saveCustomerImage(@PathVariable("employee-id") Integer employeeId, @RequestPart("image") MultipartFile[] multipartFiles) throws IOException {
         Employee employee = this.employeeService.saveEmployeeImage(employeeId, multipartFiles);
 
         return new ResponseEntity<>(employee, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/api/employees/{employee-id}")
+    // Administrator Deleting Employee
+    @DeleteMapping("/api/admin/employees/{employee-id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable("employee-id") Integer employeeId) {
         this.employeeService.delete(employeeId);
 

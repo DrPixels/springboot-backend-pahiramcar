@@ -1,69 +1,25 @@
 package com.lindtsey.pahiramcar.employee;
 
-import com.lindtsey.pahiramcar.enums.AdminRoles;
+import com.lindtsey.pahiramcar.enums.Role;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.transactions.Transaction;
+import com.lindtsey.pahiramcar.user.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
+
+@EqualsAndHashCode(callSuper = true)
 @Data
-@NoArgsConstructor
 @Entity
+@SuperBuilder
 @Table(name = "Employees")
-public class Employee {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer employeeId;
-
-    @NotEmpty(message = "Admin role is required.")
-    @Column(nullable = false)
-    private AdminRoles role;
-
-    @NotBlank(message = "Username is required.")
-    @Column(nullable = false)
-    private String username;
-
-    @NotBlank(message = "Password is required.")
-    @Column(nullable = false)
-    private String password;
-
-    @NotBlank(message = "First name is required.")
-    @Column(nullable = false)
-    private String firstName;
-
-    @Column
-    private String middleName;
-
-    @NotBlank(message = "Last name is required.")
-    @Column(nullable = false)
-    private String lastName;
-
-    @NotNull(message = "Birthdate is required.")
-    @Column(nullable = false)
-    private LocalDate birthDate;
-
-    @Pattern(regexp = "^09\\d{9}$", message = "Phone number must start with 09 and must be 11 digits long.")
-    @Column(unique = true)
-    private String mobilePhone;
-
-    @Pattern(regexp= "^[a-z][a-z0-9]*@[a-z]+\\.com$", message = "Invalid Email Format")
-    @Column(unique = true)
-    private String email;
-
-    @Column(updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+@NoArgsConstructor
+@AllArgsConstructor
+public class Employee extends User {
 
     @OneToOne(
             mappedBy = "employee",

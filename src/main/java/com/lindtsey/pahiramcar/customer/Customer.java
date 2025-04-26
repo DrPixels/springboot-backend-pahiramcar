@@ -2,15 +2,16 @@ package com.lindtsey.pahiramcar.customer;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lindtsey.pahiramcar.bookings.Booking;
+import com.lindtsey.pahiramcar.enums.MaritalStatus;
 import com.lindtsey.pahiramcar.reservations.Reservation;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.transactions.Transaction;
+import com.lindtsey.pahiramcar.user.User;
+import com.lindtsey.pahiramcar.utils.customAnnotations.birthdate.BirthDateConstraint;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
@@ -18,52 +19,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @Entity
 @Builder
 @AllArgsConstructor
 @Table(name = "Customers")
-public class Customer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer customerId;
-
-    @NotBlank(message = "Username is required.")
-    @Column(nullable = false)
-    private String username;
-
-    @NotBlank(message = "Password is required.")
-    @Column(nullable = false)
-    private String password;
-
-    @NotBlank(message = "First name is required.")
-    @Column(nullable = false)
-    private String firstName;
-
-    @Column
-    private String middleName;
-
-    @NotBlank(message = "Last name is required.")
-    @Column(nullable = false)
-    private String lastName;
-
-    @NotNull(message = "Birthdate is required.")
-    @Column(nullable = false)
-    private LocalDate birthDate;
-
-    @Pattern(regexp = "^09\\d{9}$", message = "Phone number must start with 09 and must be 11 digits long.")
-    @Column(unique = true)
-    private String mobilePhone;
-
-    @Pattern(regexp= "^[a-z][a-z0-9]*@[a-z]+\\.com$", message = "Invalid Email Format")
-    @Column(unique = true)
-    private String email;
-
-    @Column(updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+public class Customer extends User {
 
     @OneToOne(
             mappedBy = "customer",
@@ -78,11 +41,11 @@ public class Customer {
     private List<Reservation> reservations = new ArrayList<>();
 
     @OneToMany
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "user_id")
     private List<Booking> bookings = new ArrayList<>();
 
     @OneToMany
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "user_id")
     private List<Transaction> transactions = new ArrayList<>();
 
 }

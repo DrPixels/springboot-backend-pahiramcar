@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
-//    List<Booking> findBookingsByCustomer_CustomerId(Integer customerId);
+    List<Booking> findBookingsByReservation_Customer_UserId(Integer customerId);
 //    List<Booking> findBookingsByCar_CarId(Integer carId);
 
     @Query("SELECT COUNT(b) > 0 FROM Booking b " +
@@ -31,4 +31,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     void updateDueBooking(@Param("newStatus") BookingStatus newStatus,
                           @Param("currentTime") LocalDateTime now,
                           @Param("oldStatus") BookingStatus oldStatus);
+
+    int countBookingsByReservation_Customer_UserIdAndStatus(Integer customerId, BookingStatus bookingStatus);
 }

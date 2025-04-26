@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.enums.ReservationStatus;
+import com.lindtsey.pahiramcar.utils.customAnnotations.reservationBookingDate.ReservationBookingDateConstraint;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "Reservations")
+@ReservationBookingDateConstraint
 public class Reservation {
 
     @Id
@@ -24,7 +26,7 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(
-            name = "customer_id"
+            name = "user_id"
     )
     @JsonBackReference
     private Customer customer;
@@ -35,15 +37,15 @@ public class Reservation {
     )
     private Car car;
 
-    @NotBlank(message = "Reservation start date is required.")
     @Column(nullable = false)
-    private LocalDateTime reservationStartDate;
+    private LocalDateTime startDateTime;
 
     @NotBlank(message = "Reservation end date is required.")
     @Column(nullable = false)
-    private LocalDateTime reservationEndDate;
+    private LocalDateTime endDateTime;
 
-    @NotEmpty(message = "Reservation status is required.")
+    @NotBlank(message = "Reservation status is required.")
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ReservationStatus status = ReservationStatus.WAITING_FOR_APPROVAL;
 }

@@ -26,44 +26,45 @@ public class Car {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer carId;
 
-    @NotBlank(message = "Car name is required.")
     @Column(nullable = false)
     private String name;
 
-    @NotEmpty(message = "Car year is required.")
     @Column(nullable = false)
+    @Range(min = 0)
     private Integer year;
 
-    @NotBlank(message = "Plate number is required.")
     @Column(nullable = false, unique = true)
     private String plateNumber;
 
-    @NotEmpty(message = "Car type is required.")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CarType carType;
 
-    @NotEmpty(message = "Car transmission type is required.")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TransmissionType transmissionType;
 
-    @NotEmpty(message = "Car fuel type is required.")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FuelType fuelType;
 
-    @NotEmpty(message = "Car seats is required.")
     @Column(nullable = false)
-    @Range(min = 0)
+    private String engineNumber;
+
+    @Column(nullable = false)
+    private String chassisNumber;
+
+    @Column(nullable = false)
     private Integer seats;
 
-    @NotEmpty(message = "Rent price per day is required.")
     @Column(nullable = false)
-    @Range(min = 0)
-    private Double pricePerDay;
+    private double pricePerDay;
 
-    @NotEmpty(message = "Car status is required.")
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private CarStatus status = CarStatus.AVAILABLE;
 
+    @Column(nullable = false)
     private String description;
 
     @OneToMany(

@@ -26,7 +26,7 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(
-            name = "employee_id"
+            name = "user_id"
     )
     private Employee employee;
 
@@ -37,18 +37,24 @@ public class Transaction {
     private Booking booking;
 
     @CreationTimestamp
+    @Column(nullable = false)
     private LocalDateTime transactionDate;
 
-    @NotEmpty(message = "Car rental paid is required.")
     @Column(nullable = false)
-    @Range(min = 0)
     private double carRentalPaid;
+
+    private LocalDateTime penaltyPaidDateTime;
 
     @Range(min = 0)
     private double penaltyPaid;
 
-    @NotEmpty(message = "Payment mode is required.")
+    private LocalDateTime carDamagePaidDateTime;
+
+    @Range(min = 0)
+    private double carDamagePaid;
+
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private PaymentMode paymentMode;
 
 }

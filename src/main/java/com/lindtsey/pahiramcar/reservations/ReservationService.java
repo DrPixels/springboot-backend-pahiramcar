@@ -29,7 +29,7 @@ public class ReservationService {
     }
 
     public List<Reservation> findReservationsByCustomerId(Integer customerId) {
-        return reservationRepository.findReservationsByCustomer_CustomerId(customerId);
+        return reservationRepository.findReservationsByCustomer_UserId(customerId);
     }
 
     public void deleteReservation(Integer reservationId) {
@@ -43,7 +43,7 @@ public class ReservationService {
         Car car = carRepository.findById(dto.carId()).orElseThrow(() -> new RuntimeException("Car not found"));
 
         if(car.getStatus() == CarStatus.RESERVED || car.getStatus() == CarStatus.BOOKED) {
-            throw new CarAlreadyReservedException("Car is already reserved for the selected dates!");
+            throw new CarAlreadyReservedException();
         }
 
         car.setStatus(CarStatus.RESERVED);
@@ -68,8 +68,8 @@ public class ReservationService {
 
     private Reservation toReservation(ReservationDTO dto) {
         Reservation reservation = new Reservation();
-        reservation.setReservationStartDate(dto.reservationStartDate());
-        reservation.setReservationEndDate(dto.reservationStartDate().plusDays(constants.PahiramCarConstants.RESERVATION_DAYS));
+        reservation.setStartDateTime(dto.startDateTime());
+        reservation.setEndDateTime(dto.startDateTime().plusDays(constants.PahiramCarConstants.RESERVATION_DAYS));
 
         Car car = carRepository.findById(dto.carId()).orElseThrow(() -> new RuntimeException("Car not found"));
         Customer customer = customerRepository.findById(dto.customerId()).orElseThrow(() -> new RuntimeException("Customer not found"));

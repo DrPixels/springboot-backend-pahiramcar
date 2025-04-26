@@ -1,5 +1,6 @@
 package com.lindtsey.pahiramcar.reservations;
 
+import com.lindtsey.pahiramcar.customer.Customer;
 import com.lindtsey.pahiramcar.enums.ReservationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,11 +15,11 @@ import java.util.List;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
 
-    List<Reservation> findReservationsByCustomer_CustomerId(Integer customerId);
+    List<Reservation> findReservationsByCustomer_UserId(Integer customerId);
 
     @Query("SELECT COUNT(r) > 0 FROM Reservation r " +
             "WHERE r.car.carId = :carId " +
-            "AND (:startDateTime <= r.reservationEndDate AND :endDateTime >= r.reservationStartDate) " +
+            "AND (:startDateTime <= r.endDateTime AND :endDateTime >= r.startDateTime) " +
             "AND r.status = :status")
     boolean isCarReserved(@Param("carId") Integer carId,
                           @Param("startDateTime") LocalDateTime startDateTime,
@@ -29,10 +30,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
     @Modifying
     @Query("UPDATE Reservation r " +
             "SET r.status = :newStatus " +
-            "WHERE r.reservationEndDate < :now " +
+            "WHERE r.endDateTime < :now " +
             "AND r.status = :currentStatus")
     void updatedExpiredReservation(@Param("now") LocalDateTime now,
                                    @Param("currentStatus") ReservationStatus currentStatus,
                                    @Param("newStatus") ReservationStatus newStatus);
 
+    // For counting reservation per Customer
+    int countReservationsByCustomer_UserIdAndStatus(Integer customerId, ReservationStatus status);
+
+    Integer customer(Customer customer);
 }

@@ -2,6 +2,7 @@ package com.lindtsey.pahiramcar.utils.exceptionHandlers;
 
 
 import com.lindtsey.pahiramcar.utils.exceptions.CarAlreadyReservedException;
+import com.lindtsey.pahiramcar.utils.exceptions.CarHasBookingCannotDeleteException;
 import com.lindtsey.pahiramcar.utils.exceptions.DriversLicenseCurrentlyUsedInBookingException;
 import com.lindtsey.pahiramcar.utils.exceptions.ReservationCancelledOrExpiredException;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,11 @@ public class GlobalRestExceptionHandler {
 
     @ExceptionHandler(ReservationCancelledOrExpiredException.class)
     public ResponseEntity<?> handleReservationCancelledOrExpiredException(ReservationCancelledOrExpiredException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(CarHasBookingCannotDeleteException.class)
+    public ResponseEntity<?> handleCarHasBookingCannotDelete(CarHasBookingCannotDeleteException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 

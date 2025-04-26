@@ -57,7 +57,7 @@ public class BookingService {
         // Check if the reservation is valid
         Reservation reservation = reservationRepository.findById(bookingDTO.reservationId()).orElseThrow(() -> new RuntimeException("Reservation not found"));
         if(reservation.getStatus() == ReservationStatus.EXPIRED || reservation.getStatus() == ReservationStatus.CANCELLED) {
-            throw new ReservationCancelledOrExpiredException("Reservation is not valid. Either it is already cancelled or expired.");
+            throw new ReservationCancelledOrExpiredException();
         }
 
         this.isDriverLicenseCurrentlyUsedInBooking(bookingDTO.driverLicenseNumber());
@@ -101,15 +101,16 @@ public class BookingService {
 
     public void isDriverLicenseCurrentlyUsedInBooking(String driverLicenseNumber) {
         if(bookingRepository.isDriverLicenseCurrentlyUsedInBooking(driverLicenseNumber, BookingStatus.ONGOING)) {
-            throw new DriversLicenseCurrentlyUsedInBookingException("Driver's License Number is being used already from someone's booking.");
+            throw new DriversLicenseCurrentlyUsedInBookingException();
         }
 
     }
 
-//    public List<Booking> findBookingByCustomerId(Integer customerId) {
-//        return bookingRepository.findBookingsByCustomer_CustomerId(customerId);
-//    }
-//
+    // Find the bookings of the customer based on its ID
+    public List<Booking> findBookingByCustomerId(Integer customerId) {
+        return bookingRepository.findBookingsByReservation_Customer_UserId(customerId);
+    }
+
 //    public List<Booking> findBookingByCarId(Integer customerId) {
 //        return bookingRepository.findBookingsByCar_CarId(customerId);
 //    }

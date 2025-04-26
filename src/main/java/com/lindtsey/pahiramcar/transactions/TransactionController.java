@@ -24,9 +24,11 @@ public class TransactionController {
 //        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
 //    }
 
-    @GetMapping("/api/transactions")
-    public ResponseEntity<?> findAllTransaction() {
-        List<Transaction> transactions = transactionService.findAllTransactions();
+
+    // Get all the transactions for customer
+    @GetMapping("/api/customer/{customer-id}/transactions")
+    public ResponseEntity<?> findCustomerTransactionsByUserId(@PathVariable("customer-id") Integer customerId) {
+        List<Transaction> transactions = transactionService.findCustomerTransactionsByUserId(customerId);
 
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }

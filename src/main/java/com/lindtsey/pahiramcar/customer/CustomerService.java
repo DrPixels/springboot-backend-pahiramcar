@@ -1,6 +1,7 @@
 package com.lindtsey.pahiramcar.customer;
 
 import com.lindtsey.pahiramcar.enums.ImageOwnerType;
+import com.lindtsey.pahiramcar.enums.Role;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.images.ImageService;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,7 @@ public class CustomerService {
 
     public Customer toCustomer(CustomerDTO dto) {
         Customer customer = new Customer();
+        customer.setRole(Role.USER);
         customer.setUsername(dto.username());
         customer.setPassword(dto.password());
         customer.setFirstName(dto.firstName());
@@ -72,7 +74,8 @@ public class CustomerService {
         customer.setEmail(dto.email());
         customer.setMobilePhone(dto.mobilePhone());
         customer.setBirthDate(dto.birthDate());
-
+        customer.setNationality(dto.nationality());
+        customer.setMaritalStatus(dto.maritalStatus());
         return customer;
     }
 

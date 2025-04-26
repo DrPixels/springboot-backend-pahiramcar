@@ -19,15 +19,15 @@ public class CustomerController {
     }
 
     // Adding new entity
-    @PostMapping("/api/customers")
-    public ResponseEntity<?> saveCustomer(@Valid @RequestBody CustomerDTO dto) {
+//    @PostMapping("/api/customers/register")
+//    public ResponseEntity<?> saveCustomer(@Valid @RequestBody CustomerDTO dto) {
+//
+//        Customer savedCustomer = this.customerService.saveCustomer(dto);
+//        return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
+//    }
 
-        Customer savedCustomer = this.customerService.saveCustomer(dto);
-        return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/api/customer/{customer-id}/image")
-    public ResponseEntity<?> saveCustomerImage(@Valid @PathVariable("customer-id") Integer customerId, @RequestPart("image") MultipartFile[] multipartFiles) throws IOException {
+    @PostMapping("/api/customer/{customer-id}/add-customer-image")
+    public ResponseEntity<?> saveCustomerImage(@PathVariable("customer-id") Integer customerId, @RequestPart("image") MultipartFile[] multipartFiles) throws IOException {
         Customer customer = this.customerService.saveCustomerImage(customerId, multipartFiles);
 
         return new ResponseEntity<>(customer, HttpStatus.CREATED);

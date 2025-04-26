@@ -3,6 +3,7 @@ package com.lindtsey.pahiramcar.employee;
 import com.lindtsey.pahiramcar.enums.ImageOwnerType;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.images.ImageService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,7 @@ public class EmployeeService {
 
     public Employee save(EmployeeDTO dto) {
         Employee employee = toEmployee(dto);
+        employee.setPassword(new BCryptPasswordEncoder().encode(employee.getPassword()));
 
         return employeeRepository.save(employee);
     }
@@ -65,6 +67,8 @@ public class EmployeeService {
         employee.setEmail(dto.email());
         employee.setMobilePhone(dto.mobilePhone());
         employee.setBirthDate(dto.birthDate());
+        employee.setNationality(dto.nationality());
+        employee.setMaritalStatus(dto.maritalStatus());
 
         return employee;
     }

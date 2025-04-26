@@ -1,8 +1,10 @@
 package com.lindtsey.pahiramcar.car;
 
+import com.lindtsey.pahiramcar.enums.CarStatus;
 import com.lindtsey.pahiramcar.enums.ImageOwnerType;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.images.ImageService;
+import com.lindtsey.pahiramcar.utils.exceptions.CarHasBookingCannotDeleteException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +24,10 @@ public class CarService {
 
     public List<Car> findAllCars() {
         return carRepository.findAll();
+    }
+
+    public List<Car> findAvailableCars() {
+        return carRepository.findCarByStatus(CarStatus.AVAILABLE);
     }
 
     @Transactional
@@ -56,6 +62,11 @@ public class CarService {
     }
 
     public void deleteCarById(int id) {
+
+        if(carRepository.existsCarByCarIdAndStatus(id, CarStatus.BOOKED)) {
+            throw new CarHasBookingCannotDeleteException();
+        }
+
         carRepository.deleteById(id);
     }
 
@@ -70,6 +81,8 @@ public class CarService {
         car.setSeats(dto.seats());
         car.setPricePerDay(dto.pricePerDay());
         car.setDescription(dto.description());
+        car.setChassisNumber(dto.chassisNumber());
+        car.setEngineNumber(dto.engineNumber());
 
         return car;
     }
