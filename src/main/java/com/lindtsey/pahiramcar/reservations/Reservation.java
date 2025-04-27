@@ -8,6 +8,7 @@ import com.lindtsey.pahiramcar.utils.customAnnotations.reservationBookingDate.Re
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -31,7 +32,7 @@ public class Reservation {
     @JsonBackReference
     private Customer customer;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(
             name = "car_id"
     )
@@ -40,11 +41,11 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDateTime startDateTime;
 
-    @NotBlank(message = "Reservation end date is required.")
+    @NotNull(message = "Reservation end date is required.")
     @Column(nullable = false)
     private LocalDateTime endDateTime;
 
-    @NotBlank(message = "Reservation status is required.")
+    @NotNull(message = "Reservation status is required.")
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ReservationStatus status = ReservationStatus.WAITING_FOR_APPROVAL;

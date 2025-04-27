@@ -69,7 +69,7 @@ public class BookingController {
 
     // Accessible by Employee
     // Add new booking
-    @PostMapping("/api/bookings")
+    @PostMapping("/api/employee/bookings/add-booking")
     public ResponseEntity<?> saveBooking(@RequestPart("booking") @Valid BookingDTO bookingDTO,
                                          @RequestPart("transaction") @Valid BookingPaymentTransactionDTO dto,
                                          @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {

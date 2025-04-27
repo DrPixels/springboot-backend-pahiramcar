@@ -65,18 +65,35 @@ public class CarController {
     }
 
     // Accessible by Administrator
-    // Delete a car
-    @DeleteMapping("/api/admin/cars/{car-id}")
-    public ResponseEntity<?> deleteCarById(@PathVariable("car-id") Integer carId) {
-        carService.deleteCarById(carId);
-        return new ResponseEntity<>("Car has been deleted successfully", HttpStatus.OK);
+    // Set the car as inactive
+    @PatchMapping("/api/admin/cars/{car-id}/archive")
+    public ResponseEntity<?> archiveCarById(@PathVariable("car-id") Integer carId) {
+        carService.archiveCar(carId);
+        return new ResponseEntity<>("Car has been archived successfully", HttpStatus.OK);
+    }
+
+    // Accessible by Administrator
+    // Set the car as active
+    @PatchMapping("/api/admin/cars/{car-id}/unarchive")
+    public ResponseEntity<?> unarchiveCarById(@PathVariable("car-id") Integer carId) {
+        carService.unarchiveCar(carId);
+        return new ResponseEntity<>("Car has been unarchived successfully", HttpStatus.OK);
+    }
+
+    @PutMapping("/api/admin/cars/{car-id}/edit")
+    public ResponseEntity<?> editCarById(@PathVariable("car-id") Integer carId,
+                                         @RequestBody CarDTO dto) {
+        Car editedCar = carService.saveCarEdit(carId, dto);
+
+        return new ResponseEntity<>(editedCar, HttpStatus.OK);
     }
 
     // Accessible by Administrator
     // Delete a car image
-    @DeleteMapping("/api/admin/cars/images/{image-id}")
-    public ResponseEntity<?> deleteCarImageById(@PathVariable("image-id") Integer imageId) throws IOException {
-        carService.deleteImage(imageId);
+    @DeleteMapping("/api/admin/cars/{car-id}/images/{image-id}")
+    public ResponseEntity<?> deleteCarImageById(@PathVariable("car-id") Integer carId,
+                                                @PathVariable("image-id") Integer imageId) throws IOException {
+        carService.deleteImage(carId, imageId);
 
         return new ResponseEntity<>("Car image has been deleted successfully", HttpStatus.OK);
     }

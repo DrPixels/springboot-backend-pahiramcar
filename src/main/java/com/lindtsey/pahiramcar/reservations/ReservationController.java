@@ -27,9 +27,10 @@ public class ReservationController {
 
     // Accessible by customer
     // Add new reservation
-    @PostMapping("/api/customer/reservations")
-    public ResponseEntity<?> saveReservation(@Valid @RequestBody ReservationDTO dto) {
-        Reservation reservation = reservationService.saveReservation(dto);
+    @PostMapping("/api/customer/{customer-id}/reservations")
+    public ResponseEntity<?> saveReservation(@PathVariable("customer-id") Integer customerId,
+                                             @Valid @RequestBody ReservationDTO dto) {
+        Reservation reservation = reservationService.saveReservation(customerId, dto);
 
         return new ResponseEntity<>(reservation, HttpStatus.CREATED);
     }

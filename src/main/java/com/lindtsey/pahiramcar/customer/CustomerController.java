@@ -26,7 +26,7 @@ public class CustomerController {
 //        return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
 //    }
 
-    @PostMapping("/api/customer/{customer-id}/add-customer-image")
+    @PostMapping("/api/customer/{customer-id}/customer-image")
     public ResponseEntity<?> saveCustomerImage(@PathVariable("customer-id") Integer customerId, @RequestPart("image") MultipartFile[] multipartFiles) throws IOException {
         Customer customer = this.customerService.saveCustomerImage(customerId, multipartFiles);
 
@@ -42,15 +42,33 @@ public class CustomerController {
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 
+    //Edit Customer
+    @PutMapping("/api/customer/{customer-id}/edit")
+    public ResponseEntity<?> saveCustomerEdits(@PathVariable("customer-id") Integer customerId,
+                                               @Valid @RequestBody CustomerEditDTO dto) {
+        Customer customer = customerService.saveCustomerEdit(customerId, dto);
+
+        return new ResponseEntity<>(customer, HttpStatus.OK);
+    }
+
+    //Edit Customer
+    @PatchMapping("/api/customer/{customer-id}/edit/password")
+    public ResponseEntity<?> saveCustomerEdits(@PathVariable("customer-id") Integer customerId,
+                                               @Valid @RequestBody CustomerPasswordEditDTO dto) {
+        customerService.saveCustomerPassword(customerId, dto);
+
+        return new ResponseEntity<>("Password is successfully changed.", HttpStatus.OK);
+    }
+
     //Return a customer based on its id
     @GetMapping("/api/customers/{customer-id}")
     public ResponseEntity<?> findCustomerById(@PathVariable("customer-id") Integer customerId) {
 
         // Return a customer based on its id
         // Or null (empty Student Object) if no customer have that id
-        Customer customer = this.customerService.findCustomerById(customerId);
+        CustomerResponseDTO dto = this.customerService.findCustomerById(customerId);
 
-        return new ResponseEntity<>(customer, HttpStatus.OK);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     //Delete a customer

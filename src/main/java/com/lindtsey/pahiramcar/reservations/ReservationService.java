@@ -9,6 +9,7 @@ import com.lindtsey.pahiramcar.enums.ReservationStatus;
 import com.lindtsey.pahiramcar.utils.sorter.ReservationSorter;
 import com.lindtsey.pahiramcar.utils.constants;
 import com.lindtsey.pahiramcar.utils.exceptions.CarAlreadyReservedException;
+import org.springframework.cglib.core.Local;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +48,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation saveReservation(ReservationDTO dto) {
+    public Reservation saveReservation(Integer customerId, ReservationDTO dto) {
 
         // Check if the car is already reserved
         Car car = carRepository.findById(dto.carId()).orElseThrow(() -> new RuntimeException("Car not found"));
@@ -61,6 +62,13 @@ public class ReservationService {
 
         // Save the reservation with the waiting for approval as default status
         Reservation reservation = toReservation(dto);
+        System.out.println("DATEEE");
+        System.out.println(reservation.getStartDateTime());
+        System.out.println(reservation.getEndDateTime());
+
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
+        reservation.setCustomer(customer);
+
         return reservationRepository.save(reservation);
     }
 
@@ -79,12 +87,11 @@ public class ReservationService {
     private Reservation toReservation(ReservationDTO dto) {
         Reservation reservation = new Reservation();
         reservation.setStartDateTime(dto.startDateTime());
+//        reservation.setEndDateTime(dto.startDateTime().plusMinutes(5));
         reservation.setEndDateTime(dto.startDateTime().plusDays(constants.PahiramCarConstants.RESERVATION_DAYS));
 
         Car car = carRepository.findById(dto.carId()).orElseThrow(() -> new RuntimeException("Car not found"));
-        Customer customer = customerRepository.findById(dto.customerId()).orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        reservation.setCustomer(customer);
         reservation.setCar(car);
 
         return reservation;
@@ -98,10 +105,14 @@ public class ReservationService {
     @Transactional
     @Scheduled(fixedDelayString = "PT1M")
     protected void updatedExpiredReservation() {
-        LocalDateTime now = LocalDateTime.now();
-        reservationRepository.updatedExpiredReservation(now,
-                ReservationStatus.WAITING_FOR_APPROVAL,
-                ReservationStatus.EXPIRED);
+        reservationRepository.updatedExpiredReservation(
+                ReservationStatus.EXPIRED,
+                LocalDateTime.now(),
+                ReservationStatus.WAITING_FOR_APPROVAL);
+
+        carRepository.updateCarStatusForExpiredReservation(CarStatus.AVAILABLE,
+                ReservationStatus.EXPIRED,
+                LocalDateTime.now());
     }
 
 }

@@ -69,7 +69,7 @@ public class BookingService {
 
 
         // Before we save the reservation, we change the status of the car
-        Car car = carRepository.findById(bookingDTO.carId()).orElseThrow(() -> new RuntimeException("Car not found"));
+        Car car = reservation.getCar();
         car.setStatus(CarStatus.BOOKED);
         carRepository.save(car);
 

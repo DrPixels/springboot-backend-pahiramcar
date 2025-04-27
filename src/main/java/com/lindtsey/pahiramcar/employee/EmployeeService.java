@@ -1,5 +1,6 @@
 package com.lindtsey.pahiramcar.employee;
 
+import com.lindtsey.pahiramcar.customer.CustomerResponseDTO;
 import com.lindtsey.pahiramcar.enums.ImageOwnerType;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.images.ImageService;
@@ -21,11 +22,13 @@ public class EmployeeService {
         this.imageService = imageService;
     }
 
-    public Employee save(EmployeeDTO dto) {
+    public EmployeeResponseDTO save(EmployeeDTO dto) {
         Employee employee = toEmployee(dto);
         employee.setPassword(new BCryptPasswordEncoder().encode(employee.getPassword()));
 
-        return employeeRepository.save(employee);
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        return toEmployeeResponseDTO(savedEmployee);
     }
 
     public Employee saveEmployeeImage(Integer employeeId, MultipartFile[] multipartFiles) throws IOException {
@@ -71,5 +74,23 @@ public class EmployeeService {
         employee.setMaritalStatus(dto.maritalStatus());
 
         return employee;
+    }
+
+    public EmployeeResponseDTO toEmployeeResponseDTO(Employee employee) {
+
+        return new EmployeeResponseDTO(
+                employee.getRole(),
+                employee.getUserId(),
+                employee.getUsername(),
+                employee.getFirstName(),
+                employee.getMiddleName(),
+                employee.getLastName(),
+                employee.getBirthDate(),
+                employee.getMobilePhone(),
+                employee.getEmail(),
+                employee.getMaritalStatus(),
+                employee.getNationality(),
+                employee.getEmployeeImage());
+
     }
 }

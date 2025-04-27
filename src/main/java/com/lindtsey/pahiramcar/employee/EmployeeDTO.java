@@ -9,9 +9,11 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 public record EmployeeDTO(
-        @NotEmpty(message = "Role is required.") Role role,
+        @NotNull(message = "Role is required.") Role role,
 
-        @NotBlank(message = "Username is required.") String username,
+        @NotBlank(message = "Username is required.")
+        @Size(min = 6, max = 20, message = "Username length must be between 6 and 20 characters.")
+        String username,
 
         @NotBlank(message = "Password is required.")
         @Size(min = 8, max = 20, message = "Password length must be between 8 and 20 characters.") String password,
@@ -25,9 +27,11 @@ public record EmployeeDTO(
         @NotNull(message = "Birthdate is required.")
         @BirthDateConstraint LocalDate birthDate,
 
+        @NotBlank(message = "Mobile phone number is required.")
         @Pattern(regexp = "^09\\d{9}$", message = "Phone number must start with 09 and must be 11 digits long.")
         String mobilePhone,
 
+        @NotBlank(message = "Email is required.")
         @Pattern(regexp= "^[a-z][a-z0-9]*@[a-z]+\\.com$", message = "Invalid Email Format")
         String email,
 

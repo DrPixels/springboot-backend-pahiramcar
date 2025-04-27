@@ -32,9 +32,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "SET r.status = :newStatus " +
             "WHERE r.endDateTime < :now " +
             "AND r.status = :currentStatus")
-    void updatedExpiredReservation(@Param("now") LocalDateTime now,
-                                   @Param("currentStatus") ReservationStatus currentStatus,
-                                   @Param("newStatus") ReservationStatus newStatus);
+    void updatedExpiredReservation(@Param("newStatus") ReservationStatus newStatus,
+                                   @Param("now") LocalDateTime now,
+                                   @Param("currentStatus") ReservationStatus currentStatus);
 
     // For counting reservation per Customer
     int countActiveReservationsByCustomer_UserIdAndStatus(Integer customerId, ReservationStatus status);

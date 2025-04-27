@@ -1,5 +1,6 @@
 package com.lindtsey.pahiramcar.utils.customAnnotations.reservationBookingDate;
 
+import com.lindtsey.pahiramcar.reservations.Reservation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -16,17 +17,23 @@ public class ReservationBookingDateValidator implements ConstraintValidator<Rese
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
 
-        try {
-            var clazz = value.getClass();
+        if (!(value instanceof Reservation)) {
+            return false; // Ensure the object is of type Reservation
+        }
 
-            var start = (LocalDateTime) clazz.getDeclaredField("startDateTime").get(value);
-            var end = (LocalDateTime) clazz.getDeclaredField("endDateTime").get(value);
+        Reservation reservation = (Reservation) value;
 
-            // Validation logic
-            return end.isAfter(start);
-        } catch (Exception e) {
+        System.out.println("DATEEEEEEEEEEEEEE");
+        System.out.println("Start Date: " + reservation.getStartDateTime());
+        System.out.println("End Date: " + reservation.getEndDateTime());
+
+        // Handle null values
+        if (reservation.getStartDateTime() == null || reservation.getEndDateTime() == null) {
             return false;
         }
+
+        // Validation logic
+        return reservation.getEndDateTime().isAfter(reservation.getStartDateTime());
     }
 
 }

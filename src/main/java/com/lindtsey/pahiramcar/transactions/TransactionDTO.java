@@ -8,8 +8,8 @@ import org.hibernate.validator.constraints.Range;
 import java.time.LocalDateTime;
 
 public record TransactionDTO(
-        @NotEmpty(message = "Amount paid is required.")
-        @Range(min = 0) double amountPaid,
+//        @NotEmpty(message = "Amount paid is required.")
+//        @Range(min = 0) double amountPaid,
 
         @NotEmpty(message = "Payment mode is required.")
         PaymentMode paymentMode,

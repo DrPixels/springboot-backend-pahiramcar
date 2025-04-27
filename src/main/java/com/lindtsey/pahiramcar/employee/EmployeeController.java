@@ -34,7 +34,7 @@ public class EmployeeController {
 
     @PostMapping("/api/admin/register-new-employee")
     public ResponseEntity<?> saveEmployee(@Valid @RequestBody EmployeeDTO dto) {
-        Employee savedEmployee = this.employeeService.save(dto);
+        EmployeeResponseDTO savedEmployee = this.employeeService.save(dto);
 
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }

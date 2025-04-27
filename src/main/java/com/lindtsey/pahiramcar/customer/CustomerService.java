@@ -5,6 +5,8 @@ import com.lindtsey.pahiramcar.enums.Role;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.images.ImageService;
 import com.lindtsey.pahiramcar.reports.Time;
+import com.lindtsey.pahiramcar.utils.exceptions.PasswordDontMatchException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,14 +44,45 @@ public class CustomerService {
             savedCustomer = customerRepository.save(customer);
 
             imageService.deleteImage(currentCustomerImage.getImageId());
+        } else {
+            savedCustomer = customer;
         }
 
         List<Image> savedImages = imageService.saveImages(multipartFiles, ImageOwnerType.CUSTOMER, customerId);
 
-        assert savedCustomer != null;
         savedCustomer.setCustomerImage(savedImages.getFirst());
 
         return savedCustomer;
+    }
+
+    public Customer saveCustomerEdit(Integer customerId, CustomerEditDTO dto) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        customer.setUsername(dto.username());
+        customer.setFirstName(dto.firstName());
+        customer.setMiddleName(dto.middleName());
+        customer.setLastName(dto.lastName());
+        customer.setBirthDate(dto.birthDate());
+        customer.setMobilePhone(dto.mobilePhone());
+        customer.setEmail(dto.email());
+        customer.setMaritalStatus(dto.maritalStatus());
+        customer.setNationality(dto.nationality());
+
+        return customerRepository.save(customer);
+    }
+
+    public void saveCustomerPassword(Integer customerId, CustomerPasswordEditDTO dto) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        if(!passwordEncoder.matches(dto.oldPassword(), customer.getPassword())) {
+            throw new PasswordDontMatchException();
+        }
+
+        customer.setPassword(passwordEncoder.encode(dto.newPassword()));
+
+        customerRepository.save(customer);
     }
 
 
@@ -57,8 +90,10 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Customer findCustomerById(Integer customerId) {
-        return customerRepository.findById(customerId).orElse(new Customer());
+    public CustomerResponseDTO findCustomerById(Integer customerId) {
+        Customer customer = customerRepository.findById(customerId).orElse(new Customer());
+
+        return toCustomerResponse(customer);
     }
 
     public void deleteCustomerById(Integer customerId) {
@@ -70,6 +105,37 @@ public class CustomerService {
         customer.setRole(Role.CUSTOMER);
         customer.setUsername(dto.username());
         customer.setPassword(dto.password());
+        customer.setFirstName(dto.firstName());
+        customer.setLastName(dto.lastName());
+        customer.setMiddleName(dto.middleName());
+        customer.setEmail(dto.email());
+        customer.setMobilePhone(dto.mobilePhone());
+        customer.setBirthDate(dto.birthDate());
+        customer.setNationality(dto.nationality());
+        customer.setMaritalStatus(dto.maritalStatus());
+        return customer;
+    }
+
+    public CustomerResponseDTO toCustomerResponse(Customer customer) {
+
+        return new CustomerResponseDTO(
+                customer.getUserId(),
+                customer.getUsername(),
+                customer.getFirstName(),
+                customer.getMiddleName(),
+                customer.getLastName(),
+                customer.getBirthDate(),
+                customer.getMobilePhone(),
+                customer.getEmail(),
+                customer.getMaritalStatus(),
+                customer.getNationality(),
+                customer.getCustomerImage()
+        );
+    }
+
+    private Customer fromEditToCustomer(CustomerEditDTO dto) {
+        Customer customer = new Customer();
+        customer.setUsername(dto.username());
         customer.setFirstName(dto.firstName());
         customer.setLastName(dto.lastName());
         customer.setMiddleName(dto.middleName());

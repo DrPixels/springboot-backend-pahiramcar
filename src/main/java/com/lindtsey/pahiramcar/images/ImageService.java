@@ -48,6 +48,7 @@ public class ImageService {
     public List<Image> saveImages(MultipartFile[] multipartFiles, ImageOwnerType imageOwnerType, Integer ownerId) throws IOException {
 
         List<Image> images = new ArrayList<>();
+        System.out.println("LENGTHHH: " + multipartFiles.length);
         for (MultipartFile file: multipartFiles) {
             //Uploading the image in the Cloudinary
             BufferedImage bufferedImage = ImageIO.read(file.getInputStream());
@@ -95,11 +96,11 @@ public class ImageService {
         // Get from the database
         Image image = imageRepository.findById(imageId).orElseThrow(() -> new RuntimeException("Image not found"));
 
+        System.out.println("IAMGE ID TO BE DELETED: " + image.getImageId());
         // Delete from the database
         imageRepository.deleteImageByImageId(imageId);
 
         // Delete from the cloudinary
-        Map m = cloudinaryService.delete(image.getPublicId());
-        System.out.println(m.toString());
+        cloudinaryService.delete(image.getPublicId());
     }
 }

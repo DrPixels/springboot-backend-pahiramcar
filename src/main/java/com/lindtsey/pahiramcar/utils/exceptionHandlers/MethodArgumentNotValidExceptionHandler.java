@@ -1,5 +1,7 @@
 package com.lindtsey.pahiramcar.utils.exceptionHandlers;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

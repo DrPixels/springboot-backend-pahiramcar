@@ -53,7 +53,11 @@ public class TransactionService {
     }
 
     public BookingPaymentTransaction saveTransactionFromBooking(Integer bookingId, BookingPaymentTransactionDTO dto) {
+
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
+
         BookingPaymentTransaction transaction = toBookingPaymentTransaction(dto);
+        transaction.setBooking(booking);
 
         return bookingPaymentTransactionRepository.save(transaction);
     }

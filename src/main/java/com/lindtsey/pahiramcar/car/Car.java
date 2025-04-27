@@ -61,6 +61,9 @@ public class Car {
     private Double pricePerDay;
 
     @Column(nullable = false)
+    private boolean isArchived = false;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CarStatus status = CarStatus.AVAILABLE;
 

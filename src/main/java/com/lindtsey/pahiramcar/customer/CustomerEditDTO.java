@@ -3,18 +3,17 @@ package com.lindtsey.pahiramcar.customer;
 
 import com.lindtsey.pahiramcar.enums.MaritalStatus;
 import com.lindtsey.pahiramcar.utils.customAnnotations.birthdate.BirthDateConstraint;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-public record CustomerDTO(
-        @NotBlank(message = "Username is required.")
-        @Size(min = 6, max = 20, message = "Username length must be between 6 and 20 characters.")
-        String username,
+public record CustomerEditDTO(
 
-        @NotBlank(message = "Password is required.")
-        @Size(min = 8, max = 20, message = "Password length must be between 8 and 20 characters.") String password,
+        @NotBlank(message = "Username is required.")
+        String username,
 
         @NotBlank(message = "First name is required.")
         String firstName,
@@ -28,11 +27,11 @@ public record CustomerDTO(
         @BirthDateConstraint
         LocalDate birthDate,
 
-        @NotBlank(message = "Mobile phone number is required.")
+        @NotBlank
         @Pattern(regexp = "^09\\d{9}$", message = "Phone number must start with 09 and must be 11 digits long.")
         String mobilePhone,
 
-        @NotBlank(message = "Email is required.")
+        @NotBlank
         @Pattern(regexp= "^[a-z][a-z0-9]*@[a-z]+\\.com$", message = "Invalid Email Format")
         String email,
 
