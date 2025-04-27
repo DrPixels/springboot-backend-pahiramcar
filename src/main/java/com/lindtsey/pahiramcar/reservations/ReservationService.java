@@ -9,7 +9,6 @@ import com.lindtsey.pahiramcar.enums.ReservationStatus;
 import com.lindtsey.pahiramcar.utils.sorter.ReservationSorter;
 import com.lindtsey.pahiramcar.utils.constants;
 import com.lindtsey.pahiramcar.utils.exceptions.CarAlreadyReservedException;
-import org.springframework.cglib.core.Local;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,8 +110,10 @@ public class ReservationService {
                 ReservationStatus.WAITING_FOR_APPROVAL);
 
         carRepository.updateCarStatusForExpiredReservation(CarStatus.AVAILABLE,
+                CarStatus.RESERVED,
+                LocalDateTime.now(),
                 ReservationStatus.EXPIRED,
-                LocalDateTime.now());
+                List.of(ReservationStatus.BOOKED, ReservationStatus.WAITING_FOR_APPROVAL));
     }
 
 }

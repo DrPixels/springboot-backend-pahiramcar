@@ -1,6 +1,5 @@
 package com.lindtsey.pahiramcar.bookings;
 
-import com.lindtsey.pahiramcar.car.Car;
 import com.lindtsey.pahiramcar.enums.BookingStatus;
 import com.lindtsey.pahiramcar.reports.CarPerformance;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -62,7 +61,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Object[]> findStartAndEndDateTimesBetween(@Param("startDateTime") LocalDateTime startDateTime,
                                                    @Param("endDateTime") LocalDateTime endDateTime);
 
-    @Query("SELECT b.reservation.car, COUNT(*) " +
+    @Query("SELECT new com.lindtsey.pahiramcar.reports.CarPerformance(b.reservation.car, COUNT(*)) " +
             "FROM Booking b " +
             "GROUP BY b.reservation.car.carId")
     List<CarPerformance> findAllBookedCarsAndCount();

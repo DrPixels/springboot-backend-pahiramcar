@@ -18,7 +18,6 @@ import com.lindtsey.pahiramcar.transactions.childClass.lateReturnFee.LateReturnF
 import com.lindtsey.pahiramcar.transactions.childClass.lateReturnFee.LateReturnFeeTransactionDTO;
 import com.lindtsey.pahiramcar.transactions.childClass.lateReturnFee.LateReturnFeeTransactionRepository;
 import com.lindtsey.pahiramcar.utils.constants;
-import com.lindtsey.pahiramcar.utils.exceptions.InsufficientAmountPaidException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,6 +56,7 @@ public class TransactionService {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
 
         BookingPaymentTransaction transaction = toBookingPaymentTransaction(dto);
+        transaction.setAmountPaid(booking.getTotalAmount());
         transaction.setBooking(booking);
 
         return bookingPaymentTransactionRepository.save(transaction);
@@ -66,12 +66,17 @@ public class TransactionService {
     public LateReturnFeeTransaction saveTransactionDueToPenalty(Integer bookingId, LateReturnFeeTransactionDTO dto) {
 
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
+        booking.setOverDue(true);
+        Booking savedBooking = bookingRepository.save(booking);
 
-        if(dto.amountPaid() < booking.getPenalty()) {
-            throw new InsufficientAmountPaidException();
-        }
+//        if(dto.amountPaid() < booking.getPenalty()) {
+//            throw new InsufficientAmountPaidException();
+//        }
 
         LateReturnFeeTransaction transaction = toLateReturnFeeTransaction(dto);
+        transaction.setBooking(savedBooking);
+        transaction.setOverDueHours(booking.getOverdueDurationInHours());
+        transaction.setAmountPaid(booking.getPenalty());
 
         return lateReturnFeeTransactionRepository.save(transaction);
     }
@@ -90,12 +95,12 @@ public class TransactionService {
             booking.setOverDue(true);
 
             // Compute the overDueDuration in minutes
-            Long overDueDurationInMinutes = Duration.between(booking.getEndDateTime(), actualReturnDate).toMinutes();
-            booking.setOverdueDurationInMinutes(overDueDurationInMinutes);
+            long overDueDurationInMinutes = Duration.between(booking.getEndDateTime(), actualReturnDate).toMinutes();
 
             // Compute the number of overdue hours
             // In here, even a minute past hour is considered already a hour
-            long overDueHours = (long) Math.ceil((double) overDueDurationInMinutes / constants.PahiramCarConstants.MINUTES_PER_HOUR);
+            int overDueHours = (int) Math.ceil((double) overDueDurationInMinutes / constants.PahiramCarConstants.MINUTES_PER_HOUR);
+            booking.setOverdueDurationInHours(overDueHours);
 
             // Compute the penalty
             double penalty = overDueHours * constants.PahiramCarConstants.PENALTY_PER_HOUR;
@@ -117,10 +122,16 @@ public class TransactionService {
                                                      DamageRepairFeeTransactionDTO dto,
                                                 MultipartFile[] multipartFiles) throws IOException {
 
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
+        booking.setCarReturnWithDamage(true);
+        Booking savedBooking = bookingRepository.save(booking);
+
         DamageRepairFeeTransaction transaction = toDamageRepairFeeTransaction(dto);
 
+        transaction.setBooking(savedBooking);
+
         Transaction savedTransaction = transactionRepository.save(transaction);
-        Integer transactionId = transaction.getTransactionId();
+        Integer transactionId = savedTransaction.getTransactionId();
 
         List<Image> carDamageImages = imageService.saveImages(multipartFiles, ImageOwnerType.TRANSACTION, transactionId);
         transaction.setCarDamageImages(carDamageImages);
@@ -151,9 +162,6 @@ public class TransactionService {
         transaction.setTransactionType(TransactionType.DAMAGE_REPAIR_FEE);
         transaction.setCarDamageDescription(dto.carDamageDescription());
 
-        Booking booking = bookingRepository.findById(dto.bookingId()).orElseThrow(() -> new RuntimeException("Booking not found"));
-        transaction.setBooking(booking);
-
         Employee employee = employeeRepository.findById(dto.employeeId()).orElseThrow(() -> new RuntimeException("Employee not found"));
 
         transaction.setEmployee(employee);
@@ -164,13 +172,8 @@ public class TransactionService {
     private LateReturnFeeTransaction toLateReturnFeeTransaction(LateReturnFeeTransactionDTO dto) {
 
         var transaction = new LateReturnFeeTransaction();
-        transaction.setAmountPaid(dto.amountPaid());
         transaction.setPaymentMode(dto.paymentMode());
         transaction.setTransactionType(TransactionType.LATE_RETURN_FEE);
-        transaction.setOverDueHours(dto.overdueHours());
-
-        Booking booking = bookingRepository.findById(dto.bookingId()).orElseThrow(() -> new RuntimeException("Booking not found"));
-        transaction.setBooking(booking);
 
         Employee employee = employeeRepository.findById(dto.employeeId()).orElseThrow(() -> new RuntimeException("Employee not found"));
 
@@ -185,9 +188,6 @@ public class TransactionService {
         transaction.setPaymentMode(dto.paymentMode());
         transaction.setTransactionType(TransactionType.BOOKING_PAYMENT);
         transaction.setDepositAmount(constants.PahiramCarConstants.REFUNDABLE_DEPOSIT);
-
-        Booking booking = bookingRepository.findById(dto.bookingId()).orElseThrow(() -> new RuntimeException("Booking not found"));
-        transaction.setBooking(booking);
 
         Employee employee = employeeRepository.findById(dto.employeeId()).orElseThrow(() -> new RuntimeException("Employee not found"));
 

@@ -19,10 +19,18 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
     List<Car> findCarsByStatusAndIsArchived(CarStatus status, boolean isArchived);
 
     @Modifying
-    @Query("UPDATE Car c SET c.status = :newStatus WHERE c.carId IN " +
+    @Query("UPDATE Car c SET c.status = :newCarStatus " +
+            "WHERE c.status = :currentCarStatus " +
+            "AND c.carId IN " +
             "(SELECT r.car.carId FROM Reservation r " +
-            "WHERE r.status = :reservationStatus AND r.endDateTime < :now)")
-    void updateCarStatusForExpiredReservation(@Param("newStatus") CarStatus newStatus,
+            "WHERE r.status = :reservationStatus AND r.endDateTime < :now) " +
+            "AND c.carId NOT IN " +
+            "(SELECT r2.car.carId FROM Reservation r2 " +
+            "WHERE r2.status NOT IN :activeReservationStatuses)")
+    void updateCarStatusForExpiredReservation(@Param("newCarStatus") CarStatus newStatus,
+                                              @Param("currentCarStatus") CarStatus currentStatus,
+                                              @Param("now") LocalDateTime now,
                                               @Param("reservationStatus") ReservationStatus reservationStatus,
-                                              @Param("now") LocalDateTime now);
+                                              @Param("activeReservationStatuses") List<ReservationStatus> activeReservationStatuses
+                                            );
 }

@@ -10,6 +10,8 @@ import com.lindtsey.pahiramcar.customer.CustomerRepository;
 import com.lindtsey.pahiramcar.employee.Employee;
 import com.lindtsey.pahiramcar.employee.EmployeeRepository;
 import com.lindtsey.pahiramcar.enums.ImageOwnerType;
+import com.lindtsey.pahiramcar.transactions.TransactionRepository;
+import com.lindtsey.pahiramcar.transactions.childClass.damageRepairFee.DamageRepairFeeTransaction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,19 +32,21 @@ public class ImageService {
     private final BookingRepository bookingRepository;
     private final CustomerRepository customerRepository;
     private final EmployeeRepository employeeRepository;
+    private final TransactionRepository transactionRepository;
 
     public ImageService(ImageRepository imageRepository,
                         CloudinaryService cloudinaryService,
                         CarRepository carRepository,
                         BookingRepository bookingRepository,
                         CustomerRepository customerRepository,
-                        EmployeeRepository employeeRepository) {
+                        EmployeeRepository employeeRepository, TransactionRepository transactionRepository) {
         this.imageRepository = imageRepository;
         this.cloudinaryService = cloudinaryService;
         this.carRepository = carRepository;
         this.bookingRepository = bookingRepository;
         this.customerRepository = customerRepository;
         this.employeeRepository = employeeRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     public List<Image> saveImages(MultipartFile[] multipartFiles, ImageOwnerType imageOwnerType, Integer ownerId) throws IOException {
@@ -79,6 +83,10 @@ public class ImageService {
                 case EMPLOYEE:
                     Employee employee = employeeRepository.findById(ownerId).orElseThrow(() -> new RuntimeException("Employee not found"));
                     image.setEmployee(employee);
+                    break;
+                case TRANSACTION:
+                    DamageRepairFeeTransaction transaction = (DamageRepairFeeTransaction) transactionRepository.findById(ownerId).orElseThrow(() -> new RuntimeException("Transaction not found"));
+                    image.setDamageRepairFeeTransaction(transaction);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown owner type");

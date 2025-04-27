@@ -1,5 +1,6 @@
 package com.lindtsey.pahiramcar.bookings;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lindtsey.pahiramcar.enums.BookingStatus;
 import com.lindtsey.pahiramcar.reservations.Reservation;
 import com.lindtsey.pahiramcar.images.Image;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -27,7 +29,8 @@ public class Booking {
     @OneToMany (
             mappedBy = "booking"
     )
-    private List<Transaction> transactions;
+    @JsonManagedReference
+    private List<Transaction> transactions = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(
@@ -65,7 +68,8 @@ public class Booking {
     private BookingStatus status;
 
     private boolean isOverDue = false;
+    private boolean isCarReturnWithDamage = false;
 
     @Range(min = 0)
-    private Long overdueDurationInMinutes = 0L;
+    private int overdueDurationInHours = 0;
 }

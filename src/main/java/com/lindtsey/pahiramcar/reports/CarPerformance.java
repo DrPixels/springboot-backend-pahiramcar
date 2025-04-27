@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 public class CarPerformance {
 
     private Car car;
-    private int totalBookings;
+    private long totalBookings;
     private double revenueGenerated;
 
-    private CarPerformance(Car car, int totalBookings) {
+    public CarPerformance(Car car, long totalBookings) {
         this.car = car;
         this.totalBookings = totalBookings;
     }

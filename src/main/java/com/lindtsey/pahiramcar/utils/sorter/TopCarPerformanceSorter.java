@@ -1,6 +1,5 @@
 package com.lindtsey.pahiramcar.utils.sorter;
 
-import com.lindtsey.pahiramcar.bookings.Booking;
 import com.lindtsey.pahiramcar.reports.CarPerformance;
 
 import java.util.List;
@@ -72,6 +71,6 @@ public class TopCarPerformanceSorter {
 
     private static int compareCarPerformances(CarPerformance cp1, CarPerformance cp2) {
         // Primary sort: Compare by booking
-        return Integer.compare(cp2.getTotalBookings(), cp1.getTotalBookings());
+        return Long.compare(cp2.getTotalBookings(), cp1.getTotalBookings());
     }
 }

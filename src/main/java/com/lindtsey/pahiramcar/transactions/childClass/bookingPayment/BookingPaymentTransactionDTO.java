@@ -1,20 +1,17 @@
 package com.lindtsey.pahiramcar.transactions.childClass.bookingPayment;
 
 import com.lindtsey.pahiramcar.enums.PaymentMode;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Range;
 
 public record BookingPaymentTransactionDTO(
-        @NotEmpty(message = "Amount paid is required.")
+        @NotNull(message = "Amount paid is required.")
         @Range(min = 0) double amountPaid,
 
-        @NotEmpty(message = "Payment mode is required.")
+        @NotNull(message = "Payment mode is required.")
         PaymentMode paymentMode,
 
-        @NotEmpty(message = "Employee ID related to Transaction is required.")
-        Integer employeeId,
-
-        @NotEmpty(message = "Booking ID related to Transaction is required.")
-        Integer bookingId)
+        @NotNull(message = "Employee ID related to Transaction is required.")
+        Integer employeeId)
 {
 }

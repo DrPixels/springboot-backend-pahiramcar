@@ -1,6 +1,5 @@
 package com.lindtsey.pahiramcar.bookings;
 
-import com.lindtsey.pahiramcar.transactions.TransactionDTO;
 import com.lindtsey.pahiramcar.transactions.childClass.bookingPayment.BookingPaymentTransactionDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -10,12 +9,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class BookingController {
 
     private final BookingService bookingService;
-    private final BookingRepository bookingRepository;
 
     public BookingController(BookingService bookingService, BookingRepository bookingRepository) {
         this.bookingService = bookingService;
@@ -32,16 +31,17 @@ public class BookingController {
 
     // Accessible by Employee
     // Check if the driver's license is being used in the booking
-    @PostMapping("/api/employee/booking/{driver-license-number}")
-    public ResponseEntity<?> isDriverLicenseCurrentlyUsedInBooking(@PathVariable("driver-license-number") String driverLicenseNumber) {
-        bookingService.isDriverLicenseCurrentlyUsedInBooking(driverLicenseNumber);
+    @PostMapping("/api/employee/booking/check-driver-license-number")
+    public ResponseEntity<?> isDriverLicenseCurrentlyUsedInBooking(@RequestBody Map<String, String> request) {
 
+        String driverLicenseNumber = request.get("driverLicenseNumber");
+        bookingService.isDriverLicenseCurrentlyUsedInBooking(driverLicenseNumber);
 
         return new ResponseEntity<>( HttpStatus.OK);
     }
 
     // Accessible by the Customer
-    @GetMapping("/api/customer/bookings/{customer-id}")
+    @GetMapping("/api/customer/{customer-id}/bookings")
     public ResponseEntity<?> findBookingByCustomerId(@PathVariable("customer-id") Integer customerId) {
 
         List<Booking> customerBookings = this.bookingService.findBookingByCustomerId(customerId);

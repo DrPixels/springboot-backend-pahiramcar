@@ -1,5 +1,6 @@
 package com.lindtsey.pahiramcar.employee;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.transactions.Transaction;
 import com.lindtsey.pahiramcar.user.User;
@@ -28,6 +29,7 @@ public class Employee extends User {
     @OneToMany(
             mappedBy = "employee"
     )
+    @JsonManagedReference
     private List<Transaction> transactions;
 
 }

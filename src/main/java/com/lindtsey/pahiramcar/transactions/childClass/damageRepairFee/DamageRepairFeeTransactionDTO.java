@@ -2,23 +2,20 @@ package com.lindtsey.pahiramcar.transactions.childClass.damageRepairFee;
 
 import com.lindtsey.pahiramcar.enums.PaymentMode;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Range;
 
-public record DamageRepairFeeTransactionDTO(
-        @NotEmpty(message = "Amount paid is required.")
+public record  DamageRepairFeeTransactionDTO(
+        @NotNull(message = "Amount paid is required.")
         @Range(min = 0) double amountPaid,
 
-        @NotEmpty(message = "Payment mode is required.")
+        @NotNull(message = "Payment mode is required.")
         PaymentMode paymentMode,
 
         @NotBlank(message = "Car damage description is required.")
         String carDamageDescription,
 
-        @NotEmpty(message = "Employee ID related to Transaction is required.")
-        Integer employeeId,
-
-        @NotEmpty(message = "Booking ID related to Transaction is required.")
-        Integer bookingId)
+        @NotNull(message = "Employee ID related to Transaction is required.")
+        Integer employeeId)
 {
 }

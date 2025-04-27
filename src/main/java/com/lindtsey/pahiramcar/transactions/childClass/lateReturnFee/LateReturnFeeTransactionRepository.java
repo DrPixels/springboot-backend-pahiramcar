@@ -8,29 +8,29 @@ import java.time.LocalDateTime;
 
 public interface LateReturnFeeTransactionRepository extends JpaRepository<LateReturnFeeTransaction, Integer> {
 
-    @Query("SELECT SUM(t.amountPaid) FROM LateReturnFeeTransaction t")
-    Double totalLateReturnFeeFeeRevenue();
+    @Query("SELECT COALESCE(SUM(t.amountPaid), 0.0) FROM LateReturnFeeTransaction t")
+    double totalLateReturnFeeFeeRevenue();
 
-    @Query("SELECT SUM(t.amountPaid) FROM LateReturnFeeTransaction t " +
+    @Query("SELECT COALESCE(SUM(t.amountPaid), 0.0) FROM LateReturnFeeTransaction t " +
             "WHERE t.transactionDateTime " +
             "BETWEEN :startDateTime and :endDateTime")
-    Double totalLateReturnFeeRevenueBetween(@Param("startDateTime") LocalDateTime startDateTime,
+    double totalLateReturnFeeRevenueBetween(@Param("startDateTime") LocalDateTime startDateTime,
                                               @Param("endDateTime")LocalDateTime endDateTime);
 
-    @Query("SELECT SUM(t.amountPaid) FROM LateReturnFeeTransaction t " +
+    @Query("SELECT COALESCE(SUM(t.amountPaid), 0.0) FROM LateReturnFeeTransaction t " +
             "WHERE t.transactionDateTime < :startDateTime")
-    Double totalLateReturnFeeRevenueBeforeThisMonth(@Param("startDateTime")LocalDateTime startDateTime);
+    double totalLateReturnFeeRevenueBeforeThisMonth(@Param("startDateTime")LocalDateTime startDateTime);
 
-    @Query("SELECT SUM(t.amountPaid) " +
+    @Query("SELECT COALESCE(SUM(t.amountPaid), 0.0) " +
             "FROM LateReturnFeeTransaction t " +
             "WHERE t.booking.reservation.car.carId = :carId")
-    Double totalLateReturnFeeFeeRevenueByCar(@Param("carId")Integer carId);
+    double totalLateReturnFeeFeeRevenueByCar(@Param("carId")Integer carId);
 
-    @Query("SELECT SUM(t.amountPaid) FROM LateReturnFeeTransaction t " +
+    @Query("SELECT COALESCE(SUM(t.amountPaid), 0.0) FROM LateReturnFeeTransaction t " +
             "WHERE t.transactionDateTime " +
             "BETWEEN :startDateTime and :endDateTime " +
             "AND t.booking.reservation.car.carId = :carId")
-    Double totalLateReturnFeeRevenueByCarBetween(@Param("startDateTime") LocalDateTime startDateTime,
+    double totalLateReturnFeeRevenueByCarBetween(@Param("startDateTime") LocalDateTime startDateTime,
                                             @Param("endDateTime")LocalDateTime endDateTime,
                                                  @Param("carId")Integer carId);
 }

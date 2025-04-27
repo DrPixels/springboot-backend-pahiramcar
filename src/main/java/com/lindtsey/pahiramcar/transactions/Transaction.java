@@ -1,5 +1,6 @@
 package com.lindtsey.pahiramcar.transactions;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.lindtsey.pahiramcar.bookings.Booking;
 import com.lindtsey.pahiramcar.employee.Employee;
 import com.lindtsey.pahiramcar.enums.PaymentMode;
@@ -29,12 +30,14 @@ public class Transaction {
     @JoinColumn(
             name = "employee_id"
     )
+    @JsonBackReference
     private Employee employee;
 
     @ManyToOne
     @JoinColumn(
             name = "booking_id"
     )
+    @JsonBackReference
     private Booking booking;
 
     @CreationTimestamp

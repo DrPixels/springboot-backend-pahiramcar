@@ -10,7 +10,6 @@ import com.lindtsey.pahiramcar.reservations.ReservationRepository;
 import com.lindtsey.pahiramcar.images.Image;
 import com.lindtsey.pahiramcar.images.ImageService;
 import com.lindtsey.pahiramcar.transactions.Transaction;
-import com.lindtsey.pahiramcar.transactions.TransactionDTO;
 import com.lindtsey.pahiramcar.transactions.TransactionRepository;
 import com.lindtsey.pahiramcar.transactions.TransactionService;
 import com.lindtsey.pahiramcar.transactions.childClass.bookingPayment.BookingPaymentTransaction;
@@ -19,7 +18,6 @@ import com.lindtsey.pahiramcar.utils.constants;
 import com.lindtsey.pahiramcar.utils.exceptions.DriversLicenseCurrentlyUsedInBookingException;
 import com.lindtsey.pahiramcar.utils.exceptions.ReservationCancelledOrExpiredException;
 import com.lindtsey.pahiramcar.utils.sorter.BookingSorter;
-import org.springframework.cglib.core.Local;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +67,9 @@ public class BookingService {
 
 
         // Before we save the reservation, we change the status of the car
-        Car car = reservation.getCar();
+
+        Integer carId = reservation.getCar().getCarId();
+        Car car = carRepository.findById(carId).orElseThrow(() -> new RuntimeException("Car not found"));
         car.setStatus(CarStatus.BOOKED);
         carRepository.save(car);
 

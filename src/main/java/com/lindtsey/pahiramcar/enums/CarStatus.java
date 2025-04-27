@@ -11,7 +11,7 @@ public enum CarStatus {
     @JsonProperty("Reserved")
     RESERVED(2),
 
-    @JsonProperty("Rented")
+    @JsonProperty("Booked")
     BOOKED(3);
 
     private final int order;

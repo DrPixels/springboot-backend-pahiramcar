@@ -1,7 +1,6 @@
 package com.lindtsey.pahiramcar.transactions.childClass.lateReturnFee;
 
 import com.lindtsey.pahiramcar.transactions.Transaction;
-import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Data;
@@ -17,6 +16,5 @@ import lombok.experimental.SuperBuilder;
 @DiscriminatorValue("LATE_RETURN_FEE")
 public class LateReturnFeeTransaction extends Transaction{
 
-    @Column(nullable = false)
     private int overDueHours;
 }

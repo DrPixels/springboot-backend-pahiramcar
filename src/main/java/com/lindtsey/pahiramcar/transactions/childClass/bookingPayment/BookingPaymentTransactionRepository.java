@@ -8,43 +8,43 @@ import java.time.LocalDateTime;
 
 public interface BookingPaymentTransactionRepository extends JpaRepository<BookingPaymentTransaction, Integer> {
 
-    @Query("SELECT SUM(CASE WHEN t.isRefundableDepositClaimed " +
+    @Query("SELECT COALESCE(SUM(CASE WHEN t.isRefundableDepositClaimed " +
             "THEN t.amountPaid - t.depositAmount " +
-            "ELSE t.amountPaid " +
-            "END) FROM BookingPaymentTransaction t")
-    Double totalBookingPaymentRevenue();
+            "ELSE t.amountPaid END), 0.0) " +
+            "FROM BookingPaymentTransaction t")
+    double totalBookingPaymentRevenue();
 
-    @Query("SELECT SUM(CASE WHEN t.isRefundableDepositClaimed " +
+    @Query("SELECT COALESCE(SUM(CASE WHEN t.isRefundableDepositClaimed " +
             "THEN t.amountPaid - t.depositAmount " +
-            "ELSE t.amountPaid " +
-            "END) FROM BookingPaymentTransaction t " +
+            "ELSE t.amountPaid END), 0.0) " +
+            "FROM BookingPaymentTransaction t " +
             "WHERE t.transactionDateTime " +
             "BETWEEN :startDateTime and :endDateTime")
-    Double totalBookingPaymentRevenueBetween(@Param("startDateTime")LocalDateTime startDateTime,
+    double totalBookingPaymentRevenueBetween(@Param("startDateTime")LocalDateTime startDateTime,
                                              @Param("endDateTime")LocalDateTime endDateTime);
 
-    @Query("SELECT SUM(CASE WHEN t.isRefundableDepositClaimed " +
+    @Query("SELECT COALESCE(SUM(CASE WHEN t.isRefundableDepositClaimed " +
             "THEN t.amountPaid - t.depositAmount " +
-            "ELSE t.amountPaid " +
-            "END) FROM BookingPaymentTransaction t " +
+            "ELSE t.amountPaid END), 0.0) " +
+            "FROM BookingPaymentTransaction t " +
             "WHERE t.transactionDateTime < :startDateTime")
-    Double totalBookingPaymentRevenueBeforeThisMonth(@Param("startDateTime")LocalDateTime startDateTime);
+    double totalBookingPaymentRevenueBeforeThisMonth(@Param("startDateTime")LocalDateTime startDateTime);
 
-    @Query("SELECT SUM(CASE WHEN t.isRefundableDepositClaimed " +
+    @Query("SELECT COALESCE(SUM(CASE WHEN t.isRefundableDepositClaimed " +
             "THEN t.amountPaid - t.depositAmount " +
-            "ELSE t.amountPaid " +
-            "END) FROM BookingPaymentTransaction t " +
+            "ELSE t.amountPaid END), 0.0) " +
+            "FROM BookingPaymentTransaction t " +
             "WHERE t.booking.reservation.car.carId = :carId")
-    Double totalBookingPaymentRevenueByCar(@Param("carId")Integer carId);
+    double totalBookingPaymentRevenueByCar(@Param("carId")Integer carId);
 
-    @Query("SELECT SUM(CASE WHEN t.isRefundableDepositClaimed " +
+    @Query("SELECT COALESCE(SUM(CASE WHEN t.isRefundableDepositClaimed " +
             "THEN t.amountPaid - t.depositAmount " +
-            "ELSE t.amountPaid " +
-            "END) FROM BookingPaymentTransaction t " +
+            "ELSE t.amountPaid END), 0.0) " +
+            "FROM BookingPaymentTransaction t " +
             "WHERE t.transactionDateTime " +
             "BETWEEN :startDateTime AND :endDateTime " +
             "AND t.booking.reservation.car.carId = :carId")
-    Double totalBookingPaymentRevenueByCarBetween(@Param("startDateTime")LocalDateTime startDateTime,
+    double totalBookingPaymentRevenueByCarBetween(@Param("startDateTime")LocalDateTime startDateTime,
                                                   @Param("endDateTime")LocalDateTime endDateTime,
                                                   @Param("carId")Integer carId);
 }

@@ -5,7 +5,6 @@ import com.lindtsey.pahiramcar.utils.exceptions.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
@@ -24,7 +23,6 @@ public class GlobalRestExceptionHandler {
     public ResponseEntity<?> handleDriversLicenseCurrentlyUsedInBooking(DriversLicenseCurrentlyUsedInBookingException ex) {
 
         Map<String, String> response = new HashMap<>();
-        response.put("status", "true");
         response.put("message", ex.getMessage());
         return ResponseEntity.badRequest().body(response);
     }
@@ -60,7 +58,7 @@ public class GlobalRestExceptionHandler {
             var errorMessage = constraintViolation.getMessage();
             errors.put(fieldName, errorMessage);
         });
-        return ResponseEntity.badRequest().body(ex.getMessage());
+        return ResponseEntity.badRequest().body(errors);
     }
 
 }

@@ -44,7 +44,7 @@ public class TransactionController {
         return new ResponseEntity<>(transaction, HttpStatus.OK);
     }
 
-    @GetMapping("/api/admin/booking/{booking-id}/transactions/penalty")
+    @GetMapping("/api/employee/booking/{booking-id}/transactions/penalty")
     public ResponseEntity<?> getPenalty (@PathVariable("booking-id") Integer bookingId) {
 
         Map<String, Double> result = transactionService.getLateReturnFee(bookingId);
@@ -53,15 +53,16 @@ public class TransactionController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PutMapping("/api/admin/booking/{booking-id}/transactions/penalty")
-    public ResponseEntity<?> saveTransactionDueToPenalty (@PathVariable("booking-id") Integer bookingId, @RequestBody LateReturnFeeTransactionDTO dto) {
+    @PostMapping("/api/employee/booking/{booking-id}/transactions/penalty")
+    public ResponseEntity<?> saveTransactionDueToPenalty (@PathVariable("booking-id") Integer bookingId, 
+                                                          @RequestBody LateReturnFeeTransactionDTO dto) {
 
         Transaction transaction = transactionService.saveTransactionDueToPenalty(bookingId, dto);
 
         return new ResponseEntity<>(transaction, HttpStatus.OK);
     }
 
-    @PutMapping("/api/admin/booking/{booking-id}/transactions/car-damage")
+    @PostMapping("/api/employee/booking/{booking-id}/transactions/car-damage")
     public ResponseEntity<?> saveTransactionDueToCarDamage (@PathVariable("booking-id") Integer bookingId,
                                                               @RequestPart("transaction") DamageRepairFeeTransactionDTO dto,
                                                               @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {
