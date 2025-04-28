@@ -29,7 +29,7 @@ public class CarController {
     }
 
     // Get the available cars
-    @GetMapping("/api/customer/cars/available")
+    @GetMapping("/api/cars/available")
     public ResponseEntity<?> findAvailableCars() {
 
         List<Car> availableCars = carService.findAvailableCars();
