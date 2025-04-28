@@ -33,3 +33,78 @@ After successfully running the Spring Boot application, go to this link within y
 * Make sure that the frontend is running either on port **8080** or **5174**.
 ---
 
+  
+## Backend Process
+[Access](#access)  
+[User](#user)
+[Available Roles](#available-roles)  
+[Authentication Process](#authentication-process)  
+[Car Process](#car-process)  
+[Booking Process](#booking-process)  
+[Images](#images)  
+[Returning a Car (Completing a Booking)](#returning-a-car-completing-the-booking)
+
+
+---
+  #### Access
+  - From the API endpoints, you can see who can access what.
+    
+    - When the API endpoint has /admin, then it can only be access by the Administrator.
+    - When the API endpoint has /customer, then it can only be access by the Customer.
+    - When the API endpoint has /employee, then it can only be access by the Employee.
+    - When the endpoint has no /admin or /customer or /employee, then it can be accessed even without authentication.
+
+---
+  #### User
+  - When editing a user (customer, employe or admin), you all edit all its properties at the same time, except for the password.
+  - The password needs to be separately edited.
+---
+  #### Images
+- For uploading images or any data that includes images, make sure that you are using **FormData** instead of just normal application/json.
+
+---
+  #### Available Roles
+  1. **Customer**
+  2. **Admin** and **Employee**
+     - Admin can access all the endpoints for admin and employee. But employee can only access employee endpoints but not admin endpoints.
+       - This is done to show the super admin and admin hierarchy. Admin can do everything but employee can only perform bookings and transactions.
+
+---
+  #### Authentication Process
+  - After logging in, the API endpoint for authentication will return a response containg a token.
+    - Learn how to save this as this will be used for authentication and authorizaton when accessing API endpoints.
+
+---
+  #### Car Process
+  - When adding a new car, the car images are required. Do not upload car without images.
+     - During this time, you don't need to call the save images separately to upload the images as it will be handled already when the car is just to be added.
+       
+       **NOTE:** _Only use the /api/admin/cars/{car-id}/images when uploading images for an existing car already._
+  - Cars cannot be deleted also, we just archive (set as inactive) or unarchived (set as active) it.
+
+---
+  #### Booking Process
+  - The amount to be paid must be calculated within the frontend, since it will be needed when adding a new booking.
+  - Before saving the booking, I provided an API endpoint to check whether the given driver's license number is currently being used in a booking. 
+    - Make sure to check first if the driver's license number is being used before, saving the booking.
+---
+  #### Returning a Car (Completing the Booking)
+  - Before returning a car, check these conditions.
+  - _**NOTE: When using debit/credit card as a payment, include a card ID used.**_
+    
+    1. **Check if the booking is due already.**
+    
+       - If the car is due already, pay the penalty first.
+    
+         - There is an endpoint that we can call and get the penalty to be paid by the customer.
+         - There is also an endpoint that we can call to pay the penalty and save the transaction.
+    2. Provide a prompt wherein it will ask if the car has damages.
+
+         - If the car is damage, pay the damages first. The amount to pay will now come from the frontend.
+         - Moreover, provide car damage images.
+         - 
+            - There is also an endpoint that we can call to pay the car damages and save the transaction.
+          
+- **When all of these conditions are satisfied, then that is the only time that the car should be returned.**
+
+
