@@ -8,6 +8,9 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record BookingDTO(
+        @NotNull(message = "Total amount paid is required.")
+        Double totalAmountPaid,
+
         @NotBlank(message = "Renter's Full name is required.")
         String renterFullName,
 

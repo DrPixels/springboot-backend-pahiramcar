@@ -51,9 +51,7 @@ public class TransactionService {
         this.damageRepairFeeTransactionRepository = damageRepairFeeTransactionRepository;
     }
 
-    public BookingPaymentTransaction saveTransactionFromBooking(Integer bookingId, BookingPaymentTransactionDTO dto) {
-
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
+    public BookingPaymentTransaction saveTransactionFromBooking(Booking booking, BookingPaymentTransactionDTO dto) {
 
         BookingPaymentTransaction transaction = toBookingPaymentTransaction(dto);
         transaction.setAmountPaid(booking.getTotalAmount());
@@ -184,7 +182,6 @@ public class TransactionService {
 
     private BookingPaymentTransaction toBookingPaymentTransaction(BookingPaymentTransactionDTO dto) {
         var transaction = new BookingPaymentTransaction();
-        transaction.setAmountPaid(dto.amountPaid());
         transaction.setPaymentMode(dto.paymentMode());
         transaction.setTransactionType(TransactionType.BOOKING_PAYMENT);
         transaction.setDepositAmount(constants.PahiramCarConstants.REFUNDABLE_DEPOSIT);

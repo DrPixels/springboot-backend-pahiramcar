@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Range;
 
 public record BookingPaymentTransactionDTO(
-        @NotNull(message = "Amount paid is required.")
-        @Range(min = 0) double amountPaid,
 
         @NotNull(message = "Payment mode is required.")
         PaymentMode paymentMode,

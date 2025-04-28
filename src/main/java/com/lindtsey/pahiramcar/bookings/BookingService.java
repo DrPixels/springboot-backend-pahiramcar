@@ -89,7 +89,7 @@ public class BookingService {
 
         // Create the associated transaction within the booking
         // Transaction Type: Booking Payment
-        Transaction savedTransaction = transactionService.saveTransactionFromBooking(bookingId, dto);
+        Transaction savedTransaction = transactionService.saveTransactionFromBooking(savedBooking, dto);
         savedBooking.getTransactions().add(savedTransaction);
 
         return savedBooking;
@@ -158,12 +158,12 @@ public class BookingService {
         booking.setStartDateTime(dto.startDateTime());
         booking.setEndDateTime(dto.endDateTime());
 
-        long minutesDuration = Duration.between(booking.getStartDateTime(), booking.getEndDateTime()).toMinutes();
-        double days = Math.ceil((double) minutesDuration / constants.PahiramCarConstants.MINUTES_PER_DAY);
+//        long minutesDuration = Duration.between(booking.getStartDateTime(), booking.getEndDateTime()).toMinutes();
+//        double days = Math.ceil((double) minutesDuration / constants.PahiramCarConstants.MINUTES_PER_DAY);
 
         Reservation reservation = reservationRepository.findById(dto.reservationId()).orElseThrow(() -> new RuntimeException("Reservation not found"));
-        double totalAmount = reservation.getCar().getPricePerDay() * days + constants.PahiramCarConstants.REFUNDABLE_DEPOSIT;
-        booking.setTotalAmount(totalAmount);
+//        double totalAmount = reservation.getCar().getPricePerDay() * days + constants.PahiramCarConstants.REFUNDABLE_DEPOSIT;
+        booking.setTotalAmount(dto.totalAmountPaid());
 
         booking.setStatus(BookingStatus.ONGOING);
 

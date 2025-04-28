@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/cars/**").permitAll()
+                                .requestMatchers("/swagger.html","/swagger-ui/**", "/swagger-ui.html", "/docs/**", "/v3/api-docs/**").permitAll()
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/employee/**").hasRole("EMPLOYEE")
                                 .requestMatchers("/api/customer/**", "/api/customers/**").hasRole("CUSTOMER")

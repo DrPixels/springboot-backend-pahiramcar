@@ -21,7 +21,12 @@ logging:
   level:
     org.springframework.security: DEBUG
 
+server:
+  port: 8080
+  forward-headers-strategy: framework
+
 cloudinary:
   cloud-name: do8vzin4m
   api-key: 737733589814552
   api-secret: YV2Jb4AIrtGcEj1BaFIp1wTqY8U
+

@@ -1,6 +1,12 @@
 package com.lindtsey.pahiramcar.reports.adminReport;
 
 import com.lindtsey.pahiramcar.reports.customerReport.CustomerReport;
+import com.lindtsey.pahiramcar.utils.shared.DateTimeRange;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
+@Tag(name = "Admin Report")
 public class AdminReportController {
 
     private final AdminReportService adminReportService;
@@ -21,6 +28,14 @@ public class AdminReportController {
     }
 
     // Accessible by customer
+    @Operation(
+            summary = "Retrieves an overall report for the administrator, summarizing key metrics or data across the system."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = AdminReport.class))
+    )
     @GetMapping("/api/admin/report")
     public ResponseEntity<?> adminReport() {
 
@@ -29,13 +44,18 @@ public class AdminReportController {
         return new ResponseEntity<>(adminReport, HttpStatus.OK);
     }
     // Accessible by customer
+    @Operation(
+            summary = "Retrieves a custom report for the administrator based on a specified date and time range."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = AdminCustomReport.class))
+    )
     @GetMapping("/api/admin/custom-report")
-    public ResponseEntity<?> customerReport(@RequestBody Map<String, LocalDateTime> request) {
+    public ResponseEntity<?> adminCustomReport(@RequestBody DateTimeRange dateTimeRange) {
 
-        LocalDateTime startDateTime = request.get("startDateTime");
-        LocalDateTime endDateTime = request.get("endDateTime");
-
-        AdminCustomReport adminCustomReport = adminReportService.getAdminCustomReport(startDateTime, endDateTime);
+        AdminCustomReport adminCustomReport = adminReportService.getAdminCustomReport(dateTimeRange.getStartDateTime(), dateTimeRange.getEndDateTime());
 
         return new ResponseEntity<>(adminCustomReport, HttpStatus.OK);
     }
