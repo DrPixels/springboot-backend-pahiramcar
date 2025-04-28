@@ -3,6 +3,7 @@ package com.lindtsey.pahiramcar.transactions;
 import com.lindtsey.pahiramcar.reservations.Reservation;
 import com.lindtsey.pahiramcar.transactions.childClass.damageRepairFee.DamageRepairFeeTransactionDTO;
 import com.lindtsey.pahiramcar.transactions.childClass.lateReturnFee.LateReturnFeeTransactionDTO;
+import com.lindtsey.pahiramcar.utils.sorter.TransactionSorter;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -36,6 +37,24 @@ public class TransactionController {
 //
 //        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
 //    }
+
+    @Operation(
+            description = "Returns the transactions based on their transaction date. Most recent transactions will come first",
+            summary = "Retrieves a list of all transactions."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = Transaction.class)))
+    )
+    @GetMapping("/api/admin/transactions")
+    public ResponseEntity<?> getAllTransactions() {
+        List<Transaction> transactions = transactionService.findAllTransactions();
+
+        TransactionSorter.mergeSortTransactions(transactions);
+
+        return new ResponseEntity<>(transactions, HttpStatus.OK);
+    }
 
 
     // Get all the transactions for customer

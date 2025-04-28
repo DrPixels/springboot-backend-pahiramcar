@@ -30,6 +30,7 @@ public class CarController {
     // No authentication/authorization required
     // Get all of the cars available
     @Operation(
+            description = "Returns the cars based on its status. AVAILABLE -> RESERVED -> BOOKED -> ARCHIVED",
             summary = "Retrieves a list of all cars in the system."
     )
     @ApiResponse(

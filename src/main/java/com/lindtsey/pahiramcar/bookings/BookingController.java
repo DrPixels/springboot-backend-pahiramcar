@@ -62,6 +62,7 @@ public class BookingController {
     }
 
     @Operation(
+            description = "Returns the booking by start date. The most recent bookings will come first.",
             summary = "Retrieves all bookings associated with a specific customer using its ID."
     )
     @ApiResponse(
@@ -79,6 +80,7 @@ public class BookingController {
     }
 
     @Operation(
+            description = "Returns the booking by start date. The most recent bookings will come first.",
             summary = "Retrieves all completed bookings for a specific customer using its ID."
     )
     @ApiResponse(

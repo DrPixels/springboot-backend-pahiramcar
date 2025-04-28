@@ -71,19 +71,27 @@ public class CarSorter {
     }
 
     private static int compareCars(Car c1, Car c2) {
-        // Primary sort: Compare by carPrice
+        // First sort: Move archived cars to the end
+        if (c1.isArchived() && !c2.isArchived()) {
+            return 1; // c1 is archived, c2 is not -> c1 goes after c2
+        } else if (!c1.isArchived() && c2.isArchived()) {
+            return -1; // c1 is not archived, c2 is -> c1 goes before c2
+        }
+
+        // Second sort: Compare by status
+        int carStatusComparison = Integer.compare(c1.getStatus().getOrder(), c2.getStatus().getOrder());
+        if (carStatusComparison != 0) {
+            return carStatusComparison;
+        }
+
+        // Third sort: Compare by carPrice
         int carPriceComparison = c1.getPricePerDay().compareTo(c2.getPricePerDay());
         if (carPriceComparison != 0) {
             return carPriceComparison;
         }
 
-        // Secondary sort: Compare by seats
-        int carSeatsComparison = Integer.compare(c1.getSeats(), c2.getSeats());
-        if (carSeatsComparison != 0) {
-            return carSeatsComparison;
-        }
+        // Fourth sort: Compare by seats
+        return Integer.compare(c1.getSeats(), c2.getSeats());
 
-        // Third sort: Compare by status
-        return Integer.compare(c1.getStatus().getOrder(), c2.getStatus().getOrder());
     }
 }

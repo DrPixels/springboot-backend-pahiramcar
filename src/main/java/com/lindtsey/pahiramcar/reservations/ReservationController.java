@@ -28,6 +28,7 @@ public class ReservationController {
     // Accessible by customer
     // Get all the reservations per customer
     @Operation(
+            description = "Returns the reservation by start date. The most recent reservations will come first.",
             summary = "Retrieves a list of all reservations made by a specific customer."
     )
     @ApiResponse(
