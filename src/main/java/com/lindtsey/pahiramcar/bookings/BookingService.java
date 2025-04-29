@@ -65,9 +65,9 @@ public class BookingService {
 
         this.isDriverLicenseCurrentlyUsedInBooking(bookingDTO.driverLicenseNumber());
 
+        // Get the booking details
 
-        // Before we save the reservation, we change the status of the car
-
+        // Before we change the reservation, we change the status of the car
         Integer carId = reservation.getCar().getCarId();
         Car car = carRepository.findById(carId).orElseThrow(() -> new RuntimeException("Car not found"));
         car.setStatus(CarStatus.BOOKED);
@@ -79,6 +79,7 @@ public class BookingService {
 
         // Begin saving the booking
         Booking booking = toBooking(bookingDTO);
+        booking.setCarInitialMileage(car.getMileage());
         Booking savedBooking = bookingRepository.save(booking);
 
         Integer bookingId = savedBooking.getBookingId();
@@ -153,6 +154,7 @@ public class BookingService {
 
     public Booking toBooking(BookingDTO dto) {
         var booking = new Booking();
+        booking.setNumberOfPassengers(dto.numberOfPassengers());
         booking.setRenterFullName(dto.renterFullName());
         booking.setDriverLicenseNumber(dto.driverLicenseNumber());
         booking.setStartDateTime(dto.startDateTime());
@@ -176,9 +178,10 @@ public class BookingService {
     }
 
     @Transactional
-    public void returnCar(Integer bookingId) {
+    public void returnCar(Integer bookingId, float afterMileage) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
 
+        booking.setCarAfterMileage(afterMileage);
         booking.setStatus(BookingStatus.COMPLETED);
         booking.setActualReturnDate(LocalDateTime.now());
         bookingRepository.save(booking);
@@ -186,6 +189,7 @@ public class BookingService {
         // We change the status of the car
         Car car = carRepository.findById(booking.getReservation().getCar().getCarId()).orElseThrow(() -> new RuntimeException("Car not found"));
         car.setStatus(CarStatus.AVAILABLE);
+        car.setMileage(afterMileage);
         carRepository.save(car);
 
         // Deduct the refundable deposit
