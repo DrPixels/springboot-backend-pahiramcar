@@ -157,6 +157,7 @@ public class TransactionService {
         var transaction = new DamageRepairFeeTransaction();
         transaction.setAmountPaid(dto.amountPaid());
         transaction.setPaymentMode(dto.paymentMode());
+        transaction.setOnlinePaymentMethodDescription(dto.onlinePaymentMethodDescription());
         transaction.setTransactionType(TransactionType.DAMAGE_REPAIR_FEE);
         transaction.setCarDamageDescription(dto.carDamageDescription());
 
@@ -171,6 +172,7 @@ public class TransactionService {
 
         var transaction = new LateReturnFeeTransaction();
         transaction.setPaymentMode(dto.paymentMode());
+        transaction.setOnlinePaymentMethodDescription(dto.onlinePaymentMethodDescription());
         transaction.setTransactionType(TransactionType.LATE_RETURN_FEE);
 
         Employee employee = employeeRepository.findById(dto.employeeId()).orElseThrow(() -> new RuntimeException("Employee not found"));
@@ -182,6 +184,7 @@ public class TransactionService {
 
     private BookingPaymentTransaction toBookingPaymentTransaction(BookingPaymentTransactionDTO dto) {
         var transaction = new BookingPaymentTransaction();
+        transaction.setOnlinePaymentMethodDescription(dto.onlinePaymentMethodDescription());
         transaction.setPaymentMode(dto.paymentMode());
         transaction.setTransactionType(TransactionType.BOOKING_PAYMENT);
         transaction.setDepositAmount(constants.PahiramCarConstants.REFUNDABLE_DEPOSIT);

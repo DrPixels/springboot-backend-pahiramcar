@@ -68,6 +68,10 @@ public class Car {
     private CarStatus status = CarStatus.AVAILABLE;
 
     @Column(nullable = false)
+    @Range(min = 0)
+    private Float mileage;
+
+    @Column(nullable = false)
     private String description;
 
     @OneToMany(

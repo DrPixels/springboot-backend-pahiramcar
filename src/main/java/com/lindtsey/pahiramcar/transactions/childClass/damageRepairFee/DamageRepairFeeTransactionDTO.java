@@ -15,6 +15,8 @@ public record  DamageRepairFeeTransactionDTO(
         @NotBlank(message = "Car damage description is required.")
         String carDamageDescription,
 
+        String onlinePaymentMethodDescription,
+
         @NotNull(message = "Employee ID related to Transaction is required.")
         Integer employeeId)
 {

@@ -50,7 +50,7 @@ public class Transaction {
     @Column(nullable = false)
     private double amountPaid;
 
-    private String cardId;
+    private String onlinePaymentMethodDescription;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

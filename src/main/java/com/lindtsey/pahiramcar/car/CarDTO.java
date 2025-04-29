@@ -23,6 +23,9 @@ public record CarDTO(
         @NotNull(message = "Car type is required.")
         CarType carType,
 
+        @NotNull(message = "Car mileage is required.")
+        Float mileage,
+
         @NotNull(message = "Car transmission type is required.")
         TransmissionType transmissionType,
 

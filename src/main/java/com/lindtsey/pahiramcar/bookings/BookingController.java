@@ -156,8 +156,12 @@ public class BookingController {
             content = @Content(mediaType = "application/json")
     )
     @PutMapping("/api/employee/bookings/{booking-id}/return-car")
-    public ResponseEntity<?> returnCar(@PathVariable("booking-id") Integer bookingId) {
-        bookingService.returnCar(bookingId);
+    public ResponseEntity<?> returnCar(@PathVariable("booking-id") Integer bookingId,
+                                       @RequestBody Map<String, Float> request) {
+
+        float afterMileage = request.get("afterMileage");
+
+        bookingService.returnCar(bookingId, afterMileage);
 
         return new ResponseEntity<>("Booking was successfully completed.", HttpStatus.OK);
     }

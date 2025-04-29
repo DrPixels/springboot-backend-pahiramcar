@@ -6,6 +6,14 @@ import java.util.List;
 
 public class ReservationSorter {
 
+    private boolean sortByDateTime;
+    private boolean sortByStatus;
+
+    ReservationSorter(boolean sortByDateTime, boolean sortByStatus) {
+        this.sortByDateTime = sortByDateTime;
+        this.sortByStatus = sortByStatus;
+    }
+
     public static void mergeSortReservations(List<Reservation> reservations) {
         if (reservations == null || reservations.size() <= 1) {
             return; // Already sorted or empty list
@@ -71,6 +79,7 @@ public class ReservationSorter {
     }
 
     private static int compareReservations(Reservation r1, Reservation r2) {
+
         // Primary sort: Compare by startDateTime
         int dateTimeComparison = r2.getStartDateTime().compareTo(r1.getStartDateTime());
         if (dateTimeComparison != 0) {

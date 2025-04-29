@@ -7,9 +7,6 @@ public enum PaymentMode {
     @JsonProperty("Cash")
     CASH,
 
-    @JsonProperty("Debit Card")
-    DEBIT_CARD,
-
-    @JsonProperty("Credit Card")
-    CREDIT_CARD,
+    @JsonProperty("Online")
+    ONLINE
 }

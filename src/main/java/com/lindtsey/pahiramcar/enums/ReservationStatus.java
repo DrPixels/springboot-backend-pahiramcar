@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public enum ReservationStatus {
+public enum  ReservationStatus {
 
     @JsonProperty("Available")
     WAITING_FOR_APPROVAL(1),

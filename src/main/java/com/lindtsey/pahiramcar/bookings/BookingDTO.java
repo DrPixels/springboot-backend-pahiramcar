@@ -11,6 +11,9 @@ public record BookingDTO(
         @NotNull(message = "Total amount paid is required.")
         Double totalAmountPaid,
 
+        @NotNull(message = "Number of passengers is required.")
+        Integer numberOfPassengers,
+
         @NotBlank(message = "Renter's Full name is required.")
         String renterFullName,
 

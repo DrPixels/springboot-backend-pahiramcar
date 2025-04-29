@@ -15,8 +15,7 @@ public class AdminCustomReport {
     private double averageRentalDaysBetween;
     private int totalCustomersCountBetween;
     private double totalRevenueByCashBetween;
-    private double totalRevenueByDebitCardBetween;
-    private double totalRevenueByCreditCardBetween;
+    private double totalRevenueByOnlineBetween;
     private double totalRevenueByBookingBetween;
     private double totalRevenueByLateReturnFeeBetween;
     private double getTotalRevenueByDamageRepairFeeBetween;

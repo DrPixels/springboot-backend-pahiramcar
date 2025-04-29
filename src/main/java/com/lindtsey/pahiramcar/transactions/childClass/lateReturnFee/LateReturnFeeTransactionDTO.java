@@ -8,6 +8,8 @@ public record LateReturnFeeTransactionDTO(
         @NotNull(message = "Payment mode is required.")
         PaymentMode paymentMode,
 
+        String onlinePaymentMethodDescription,
+
         @NotNull(message = "Employee ID related to Transaction is required.")
         Integer employeeId
 )

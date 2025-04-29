@@ -1,6 +1,7 @@
 package com.lindtsey.pahiramcar.reservations;
 
 import com.lindtsey.pahiramcar.employee.Employee;
+import com.lindtsey.pahiramcar.utils.sorter.ReservationSorter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,6 +40,8 @@ public class ReservationController {
     @GetMapping("/api/customer/reservations/{customer-id}")
     public ResponseEntity<?> findReservationsByCustomerId(@PathVariable("customer-id") Integer customerId) {
         List<Reservation> customerReservations = reservationService.findReservationsByCustomerId(customerId);
+
+        ReservationSorter.mergeSortReservations(customerReservations);
         return new ResponseEntity<>(customerReservations, HttpStatus.OK);
     }
 

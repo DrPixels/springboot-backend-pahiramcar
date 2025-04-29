@@ -58,10 +58,18 @@ public class Booking {
     private LocalDateTime actualReturnDate;
 
     @Range(min = 0)
-    private double totalAmount;
+    private Double totalAmount;
 
     @Range(min = 0)
     private double penalty = 0;
+
+    @Column(nullable = false)
+    @Range(min = 0)
+    private Integer numberOfPassengers;
+
+    private float carInitialMileage;
+
+    private float carAfterMileage;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

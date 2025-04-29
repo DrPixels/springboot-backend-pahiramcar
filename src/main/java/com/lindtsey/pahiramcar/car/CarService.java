@@ -81,6 +81,7 @@ public class CarService {
 
         car.setName(dto.name());
         car.setYear(dto.year());
+        car.setMileage(dto.mileage());
         car.setPlateNumber(dto.plateNumber());
         car.setCarType(dto.carType());
         car.setTransmissionType(dto.transmissionType());
@@ -132,6 +133,7 @@ public class CarService {
         Car car = new Car();
         car.setName(dto.name());
         car.setYear(dto.year());
+        car.setMileage(dto.mileage());
         car.setPlateNumber(dto.plateNumber());
         car.setCarType(dto.carType());
         car.setTransmissionType(dto.transmissionType());

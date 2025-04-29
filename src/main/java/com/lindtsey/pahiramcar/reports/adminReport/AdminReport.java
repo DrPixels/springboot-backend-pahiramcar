@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class AdminReport {
+public class  AdminReport {
 
     private double totalRevenue;
     private double totalRevenueBeforeThisMonth;
@@ -19,8 +19,7 @@ public class AdminReport {
     private int totalCustomersCount;
     private int totalCustomersCountBeforeThisMonth;
     private double totalRevenueByCash;
-    private double totalRevenueByDebitCard;
-    private double totalRevenueByCreditCard;
+    private double totalRevenueByOnline;
     private double totalRevenueByBooking;
     private double totalRevenueByLateReturnFee;
     private double getTotalRevenueByDamageRepairFee;

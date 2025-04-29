@@ -59,7 +59,7 @@ public class TransactionController {
 
     // Get all the transactions for customer
     @Operation(
-            summary = "Retrieves a list of all transactions associated with a specific customer."
+            summary = "Retrieves a list of all transactions associated with a specific customer. Most recent on will go first."
     )
     @ApiResponse(
             responseCode = "200",
@@ -69,6 +69,8 @@ public class TransactionController {
     @GetMapping("/api/customer/{customer-id}/transactions")
     public ResponseEntity<?> findCustomerTransactionsByUserId(@PathVariable("customer-id") Integer customerId) {
         List<Transaction> transactions = transactionService.findCustomerTransactionsByUserId(customerId);
+
+        TransactionSorter.mergeSortTransactions(transactions);
 
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }

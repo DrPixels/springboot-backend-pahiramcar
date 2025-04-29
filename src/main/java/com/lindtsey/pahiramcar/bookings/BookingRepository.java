@@ -66,7 +66,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "GROUP BY b.reservation.car.carId")
     List<CarPerformance> findAllBookedCarsAndCount();
 
-    @Query("SELECT b.reservation.car, COUNT(*) " +
+    @Query("SELECT new com.lindtsey.pahiramcar.reports.CarPerformance(b.reservation.car, COUNT(*)) " +
             "FROM Booking b " +
             "WHERE b.startDateTime " +
             "BETWEEN :startDateTime AND :endDateTime " +

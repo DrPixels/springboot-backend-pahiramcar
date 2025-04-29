@@ -1,7 +1,7 @@
 package com.lindtsey.pahiramcar.reports.adminReport;
 
 import com.lindtsey.pahiramcar.reports.customerReport.CustomerReport;
-import com.lindtsey.pahiramcar.utils.shared.DateTimeRange;
+import com.lindtsey.pahiramcar.utils.shared.DateRange;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
 
 @RestController
@@ -53,9 +54,11 @@ public class AdminReportController {
                     schema = @Schema(implementation = AdminCustomReport.class))
     )
     @GetMapping("/api/admin/custom-report")
-    public ResponseEntity<?> adminCustomReport(@RequestBody DateTimeRange dateTimeRange) {
+    public ResponseEntity<?> adminCustomReport(@RequestBody DateRange dateRange) {
 
-        AdminCustomReport adminCustomReport = adminReportService.getAdminCustomReport(dateTimeRange.getStartDateTime(), dateTimeRange.getEndDateTime());
+        LocalDateTime startDateTime = dateRange.getStartDate().atStartOfDay();
+        LocalDateTime endDateTime = dateRange.getEndDate().atTime(LocalTime.MAX);
+        AdminCustomReport adminCustomReport = adminReportService.getAdminCustomReport(startDateTime, endDateTime);
 
         return new ResponseEntity<>(adminCustomReport, HttpStatus.OK);
     }

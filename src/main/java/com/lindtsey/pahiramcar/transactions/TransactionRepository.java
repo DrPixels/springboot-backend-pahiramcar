@@ -18,12 +18,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 
     Transaction findTransactionByBooking_BookingIdAndTransactionType(Integer bookingId, TransactionType transactionType);
 
-    @Query("SELECT SUM(t.amountPaid) " +
+    @Query("SELECT COALESCE(SUM(t.amountPaid), 0.0) " +
             "FROM Transaction t " +
             "WHERE t.paymentMode = :paymentMode ")
     Double totalRevenueByPaymentMode(@Param("paymentMode") PaymentMode paymentMode);
 
-    @Query("SELECT SUM(t.amountPaid) " +
+    @Query("SELECT COALESCE(SUM(t.amountPaid), 0.0) " +
             "FROM Transaction t " +
             "WHERE t.paymentMode = :paymentMode " +
             "AND t.transactionDateTime " +
