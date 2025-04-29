@@ -1,7 +1,13 @@
-# Pahiram Car Backend Installation Setup
+# Contents
+[Pahiram Car Backend Installation Setup](#pahiram-car-backend-installation-setup)
+[Accessing API Documentation](#accessing-api-documentation)
+[Accessing API from Frontend](#accessing-api-documentation)
+[Backend Process](#backend-process)
+[Fixing database schema when new code is added](#fixing-the-database-schema-when-new-code-is-added)
 
-## Recommended Way
-1. Install IntelliJ IDEA Ultimate
+## Pahiram Car Backend Installation Setup
+### Recommended Way
+1. Install IntelliJ IDEA Ultimate / IntelliJ IDEA Community
 2. Clone the repository.
 3. Check the [steps](#steps-in-changing-the-database-setup-from-the-spring-boot) in changing the database setup.
 4. After changing the settings, run the application.
@@ -21,18 +27,17 @@
      - **username**
      - **password**  
     
-*Also, make sure that you have downloaded the MySQL JDBC Driver.*
+*Also, make sure that you have downloaded the MySQL and MySQL JDBC Driver.*
 
 ---
-### Accessing API Documentation
+## Accessing API Documentation
 After successfully running the Spring Boot application, go to this link within your browser to access the API documentation.  
 - *Note: You can only access the API documentation when the server is running.*  
 > **http://localhost:8080/swagger-ui/index.html#/**
 ---
-### Accessing the API from the Frontend
+## Accessing the API from the Frontend
 * Make sure that the frontend is running either on port **8080** or **5174**.
 ---
-
   
 ## Backend Process
 [Access](#access)  
@@ -108,4 +113,14 @@ After successfully running the Spring Boot application, go to this link within y
           
 - **When all of these conditions are satisfied, then that is the only time that the car should be returned.**
 
+---
+## Fixing the database schema when new code is added
+- When new changes are made to the code such as adding new attribute for an entity, the database schema may need to be recreated again.  
+  - Steps to recreate the database based on the new code added  
+    1. Go to **src** -> **main** -> **java** -> **resources** -> **application.yml**
+    2. Under spring, go to jpa, then go to hibernate, and you will see the **ddl-auto**.
+    3. Change the value to **create**. Then run the Spring Boot Application.
+    4. When the application has successfully run, the database must be recreated by now.
+    5. When the database was recreated already, change the ddl-auto value back to the **update"".
+       - If you don't change it, everytime that you run the Spring Boot Application, it will recreate the database again, and you will lose your previous data.
 
