@@ -56,8 +56,9 @@ After successfully running the Spring Boot application, go to this link within y
 
 ---
   #### User
-  - When editing a user (customer, employe or admin), you all edit all its properties at the same time, except for the password.
+  - When editing a user (customer, employee or admin), you can edit all its properties at the same time, except for the password.
   - The password needs to be separately edited.
+    - Check the enpoint provided for changing the password.
 ---
   #### Images
 - For uploading images or any data that includes images, make sure that you are using **FormData** instead of just normal application/json.
@@ -67,7 +68,7 @@ After successfully running the Spring Boot application, go to this link within y
   1. **Customer**
   2. **Admin** and **Employee**
      - Admin can access all the endpoints for admin and employee. But employee can only access employee endpoints but not admin endpoints.
-       - This is done to show the super admin and admin hierarchy. Admin can do everything but employee can only perform bookings and transactions.
+       - This is done to show the super admin and admin hierarchy. Admin can do everything employee can but employee can only perform bookings and transactions.
 
 ---
   #### Authentication Process
