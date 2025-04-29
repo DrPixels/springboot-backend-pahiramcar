@@ -1,10 +1,11 @@
 # Contents
-[Pahiram Car Backend Installation Setup](#pahiram-car-backend-installation-setup)
-[Accessing API Documentation](#accessing-api-documentation)
-[Accessing API from Frontend](#accessing-api-documentation)
-[Backend Process](#backend-process)
-[Fixing database schema when new code is added](#fixing-the-database-schema-when-new-code-is-added)
+[Pahiram Car Backend Installation Setup](#pahiram-car-backend-installation-setup)  
+[Accessing API Documentation](#accessing-api-documentation)  
+[Accessing API from Frontend](#accessing-api-documentation)  
+[Backend Process](#backend-process)  
+[Fixing database schema when new code is added](#fixing-the-database-schema-when-new-code-is-added)  
 
+---
 ## Pahiram Car Backend Installation Setup
 ### Recommended Way
 1. Install IntelliJ IDEA Ultimate / IntelliJ IDEA Community
