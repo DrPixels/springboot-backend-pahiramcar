@@ -122,6 +122,6 @@ After successfully running the Spring Boot application, go to this link within y
     2. Under spring, go to jpa, then go to hibernate, and you will see the **ddl-auto**.
     3. Change the value to **create**. Then run the Spring Boot Application.
     4. When the application has successfully run, the database must be recreated by now.
-    5. When the database was recreated already, change the ddl-auto value back to the **update"".
+    5. When the database was recreated already, change the ddl-auto value back to the **update**.
        - If you don't change it, everytime that you run the Spring Boot Application, it will recreate the database again, and you will lose your previous data.
 
