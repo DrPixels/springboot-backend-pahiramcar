@@ -1,6 +1,7 @@
 package com.lindtsey.pahiramcar.transactions;
 
-import com.lindtsey.pahiramcar.reservations.Reservation;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lindtsey.pahiramcar.transactions.childClass.damageRepairFee.DamageRepairFeeTransaction;
 import com.lindtsey.pahiramcar.transactions.childClass.damageRepairFee.DamageRepairFeeTransactionDTO;
 import com.lindtsey.pahiramcar.transactions.childClass.lateReturnFee.LateReturnFeeTransactionDTO;
 import com.lindtsey.pahiramcar.utils.sorter.TransactionSorter;
@@ -11,6 +12,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,15 +23,21 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @Tag(name = "Transaction")
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final ObjectMapper objectMapper;
+    private final Validator validator;
 
-    public TransactionController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService, ObjectMapper objectMapper, Validator validator) {
         this.transactionService = transactionService;
+        this.objectMapper = objectMapper;
+        this.validator = validator;
     }
     
 //    @PostMapping("/api/transactions")
@@ -137,12 +146,23 @@ public class TransactionController {
     )
     @PostMapping("/api/employee/booking/{booking-id}/transactions/car-damage")
     public ResponseEntity<?> saveTransactionDueToCarDamage (@PathVariable("booking-id") Integer bookingId,
-                                                              @RequestPart("transaction") DamageRepairFeeTransactionDTO dto,
+                                                              @RequestPart("transactionJson") String transactionJson,
                                                               @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {
 
-        Transaction transaction = transactionService.saveTransactionDueToCarDamage(bookingId, dto, multipartFiles);
+        DamageRepairFeeTransactionDTO transactionDTO = objectMapper.readValue(transactionJson, DamageRepairFeeTransactionDTO.class);
 
-        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+        Set<ConstraintViolation<DamageRepairFeeTransactionDTO>> transactionViolations = validator.validate(transactionDTO);
+
+        if (!transactionViolations.isEmpty()) {
+            String errorMessage = transactionViolations.stream()
+                    .map(violation -> violation.getMessage())
+                    .collect(Collectors.joining(", "));
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+
+        DamageRepairFeeTransaction savedTransaction = transactionService.saveTransactionDueToCarDamage(bookingId, transactionDTO, multipartFiles);
+
+        return new ResponseEntity<>(savedTransaction, HttpStatus.CREATED);
     }
 
     @Hidden

@@ -1,14 +1,14 @@
 package com.lindtsey.pahiramcar.car;
 
-import com.lindtsey.pahiramcar.bookings.Booking;
-import com.lindtsey.pahiramcar.utils.sorter.CarSorter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +16,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @Tag(name = "Car")
 public class CarController {
 
     private final CarService carService;
+    private final ObjectMapper objectMapper;
+    private final Validator validator;
 
-    public CarController(CarService carService) {
+    public CarController(CarService carService, ObjectMapper objectMapper, Validator validator) {
         this.carService = carService;
+        this.objectMapper = objectMapper;
+        this.validator = validator;
     }
 
     // No authentication/authorization required
@@ -90,12 +96,30 @@ public class CarController {
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = Car.class))
     )
-    @PostMapping("/api/admin/cars")
-    public ResponseEntity<?> addCarWithImages(@RequestPart("car") @Valid CarDTO dto, @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {
+    @PostMapping(value = "/api/admin/cars", consumes = "multipart/form-data")
+    public ResponseEntity<?> addCarWithImages(@RequestPart("carJson") String carJson, @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {
+
+        CarDTO dto = objectMapper.readValue(carJson, CarDTO.class);
+
+        Set<ConstraintViolation<CarDTO>> violations = validator.validate(dto);
+
+        if (!violations.isEmpty()) {
+            String errorMessage = violations.stream()
+                    .map(violation -> violation.getMessage())
+                    .collect(Collectors.joining(", "));
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+
         Car savedCar = carService.saveCarWithImages(dto, multipartFiles);
 
         return new ResponseEntity<>(savedCar, HttpStatus.CREATED);
     }
+//    @PostMapping(value = "/api/admin/cars", consumes = "multipart/form-data")
+//    public ResponseEntity<?> addCarWithImages(@RequestPart("car") @Valid CarDTO dto, @RequestPart("images") MultipartFile[] multipartFiles) throws IOException {
+//        Car savedCar = carService.saveCarWithImages(dto, multipartFiles);
+//
+//        return new ResponseEntity<>(savedCar, HttpStatus.CREATED);
+//    }
 
     // Accessible by Administrator
     // Adding new image for a car
